@@ -14,7 +14,7 @@ async function getUserCourses(email: string) {
 export default async function UserCourses({ email }: { email: string }) {
     const userCourses = await getUserCourses(email);
     return (
-        <div className="h-4/6 h-min w-full bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
+        <div className="md:h-4/6 h-min w-full bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
             test
         </div>
     );
