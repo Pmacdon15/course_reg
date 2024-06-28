@@ -20,10 +20,10 @@ export default async function RootLayout({
 }>) {
   const user = await  getUser();
   const email= user.user?.email ||"";
-  console.log(email);
+  //console.log(email);
   return (
     <html lang="en">
-      <body className="">
+      <body className="h-dvh">
         <AppBar email={email}>
           <LogInLogOuButtons />
         </AppBar>

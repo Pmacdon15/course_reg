@@ -4,7 +4,7 @@ import {useRouter} from 'next/navigation';
 
 export default function SignInButton(signInUrl: any) {
     const router = useRouter();
-    console.log(signInUrl);
+    //console.log(signInUrl);
     return (
         <Button onClick={() => router.push(`${signInUrl.signInUrl}`)} color="inherit">Login</Button>
     );

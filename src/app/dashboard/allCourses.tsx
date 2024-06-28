@@ -1,7 +1,6 @@
 import { sql } from "@vercel/postgres";
-async function getCourses() {
+async function getAllCourses() {
     'use server';
-
     // Todo - get courses from the database
     // for now just return a list of courses
     return [
@@ -40,10 +39,10 @@ async function getCourses() {
     ];
 }
 
-export default async function Courses() {
-    const courses = await getCourses();
+export default async function AllCourses() {
+    const courses = await getAllCourses();
     return (
-        <div className="h-200 w-96 bg-blue-200 rounded-lg shadow-md p-4" >
+        <div className="h-200 w-96 md:max-min-w-full  bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4" >
             <h1 className="text-2xl font-bold mb-4">Available Courses</h1>
             <ul>
                 {courses.map((course) => (

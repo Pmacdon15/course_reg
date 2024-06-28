@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useRouter } from "next/navigation";
 
 
-const pages = ['Dashboard', 'My Courses', 'Register', 'All Courses'];
+const pages = ['Dashboard', 'Register'];
 
 export default function ButtonAppBar({
     email,
@@ -33,7 +33,7 @@ export default function ButtonAppBar({
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
-    console.log(email);
+    //console.log(email);
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
