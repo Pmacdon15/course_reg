@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useRouter } from "next/navigation";
 
 
-const pages = ['Dashboard', 'Register'];
+const pages = ['Dashboard', 'Register', 'Add Grades'];
 
 export default function ButtonAppBar({
     email,
