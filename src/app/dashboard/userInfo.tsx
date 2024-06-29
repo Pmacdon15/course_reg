@@ -1,8 +1,8 @@
 import Image from "next/image";
 export default function userInfo({ user }: { user: any }) {
-    console.log(user);
+    // console.log(user);
     return (
-        <div className="flex flex-col h-min md:h-2/6 justify-center w-full bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg text-center shadow-md p-4 gap-5">
+        <div className="flex flex-col  h-auto lg:h-2/6 justify-center w-full bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg text-center shadow-md p-4 gap-5">
             <div>
                 Hello {user.user?.firstName} {user.user?.lastName}!
             </div>
