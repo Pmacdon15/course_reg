@@ -32,8 +32,8 @@ export default async function UserCourses({ email }: { email: string }) {
     console.log(userCourses);
     return (
         <>        <div className="md:h-4/6 h-min w-full bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md gap- p-4">
-            <div>
-                <h2 className="text-center text-xl font-bold">Your Current Courses:</h2>
+            <div className="text-center">
+                <h2 className="text-xl font-bold">Your Current Courses:</h2>
                 {userCourses.length === 0 ? (
                     <p>No current courses to list</p>
                 ) : (
@@ -44,8 +44,8 @@ export default async function UserCourses({ email }: { email: string }) {
                     ))
                 )}
             </div>
-            <div>
-                <h2 className="text-center text-xl font-bold">Past Courses:</h2>
+            <div className="text-center">
+                <h2 className="text-xl font-bold">Past Courses:</h2>
                 {userCourses.filter((course) => !course.registered).length === 0 ? (
                     <p>No past courses to list</p>
                 ) : (

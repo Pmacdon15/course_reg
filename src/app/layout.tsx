@@ -23,7 +23,7 @@ export default async function RootLayout({
   //console.log(email);
   return (
     <html lang="en">
-      <body className="h-dvh">
+      <body className="h-dvh w-full">
         <AppBar email={email}>
           <LogInLogOuButtons />
         </AppBar>
