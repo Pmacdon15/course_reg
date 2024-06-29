@@ -9,7 +9,7 @@ export default async function Page() {
   const email = user.user?.email || "";
   //console.log(user);
   return (
-    <div className='flex flex-wrap min-h-5/6 content-center justify-center gap-5 p-4'>
+    <div className='flex flex-wrap lg:my-8 content-center justify-center gap-5 p-4'>
       <AllCourses />
       {user ? <div className='flex flex-col w-full md:w-96 gap-5 '>
         <UserInfo user={user} />
