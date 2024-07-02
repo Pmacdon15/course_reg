@@ -331,3 +331,4 @@ INSERT INTO CRClasses (
 
 select * from CRClasses
 Drop Table CRClasses
+select * from  crUsersCourses

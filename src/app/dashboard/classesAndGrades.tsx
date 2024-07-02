@@ -1,7 +1,7 @@
 'use client';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { UserCourse } from '@/app/dashboard/types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
 export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserCourse[] }) {
@@ -15,17 +15,23 @@ export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserC
     setCurrentCourseIndex((prevIndex) => prevIndex - 1);
   };
 
+  usersCourses.sort((a, b) => {
+    if (a.registered && !b.registered) return -1;
+    if (!a.registered && b.registered) return 1;
+    return 0;
+  });
+
   const currentCourse = usersCourses[currentCourseIndex];
 
   return (
     <div className="w-full md:w-96 justify-center text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
-     
+
       <h1 className="text-xl font-bold text-center">Classes and Grades</h1>
       {currentCourse && (
         <div className='flex flex-col justify-center items-center'>
           <h2>{currentCourse.name}</h2>
           <Gauge
-            value={75}
+            value={5}
             width={200}
             height={200}
             startAngle={-110}
@@ -38,11 +44,12 @@ export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserC
               },
             }}
             text={
-              ({ value, valueMax }) => `${value} / ${valueMax}`
+              ({ value, valueMax }) => `${value} / ${currentCourse.total_classes}`
             }
           />
           <h3>
-           <p>Classes: 15/20 Complete.</p>
+
+            <p>Classes: 15/{currentCourse.total_classes} Completed.</p>
           </h3>
         </div>
       )}

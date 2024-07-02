@@ -13,4 +13,5 @@ export type UserCourse = {
   school: string;
   terms: string;
   registered: boolean;
+  total_classes: number;
 }
