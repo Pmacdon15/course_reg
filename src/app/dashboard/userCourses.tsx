@@ -1,6 +1,6 @@
 import { UserCourse } from "@/app/dashboard/types";
 
-export default async function UserCourses({ usersCourses }: { usersCourses: UserCourse[]}) {
+export default async function UserCourses({ usersCourses }: { usersCourses: UserCourse[] }) {
     // const userCourses = await getUserCourses(email);
     // console.log(userCourses);
     return (
@@ -11,12 +11,13 @@ export default async function UserCourses({ usersCourses }: { usersCourses: User
                     <p>No current courses to list</p>
                 ) : (
                     usersCourses.filter((course) => course.registered).map((course) => (
-                        <div key={(course.id)} className="mb-4">
+                        <div key={`current-course-${course.id}`} className="mb-4">
                             <h4>{course.name}</h4>
                             <p>To {course.brief_description}</p>
                             <p>at our {course.school}</p>
                             <p>over {course.terms} terms</p>
                         </div>
+
                     ))
                 )}
             </div>
@@ -26,7 +27,7 @@ export default async function UserCourses({ usersCourses }: { usersCourses: User
                     <p>No past courses to list.</p>
                 ) : (
                     usersCourses.filter((course) => !course.registered).map((course) => (
-                        <div key={(course.id)} className="mb-4">
+                        <div key={course.id} className="mb-4">
                             <h4>{course.name}</h4>
                         </div>
                     ))
