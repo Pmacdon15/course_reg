@@ -17,7 +17,7 @@ export default async function Page() {
       <AllCourses courses={courses} />
       {user ? <UserSection user={user} userCourses={userCourses} /> :
         <div className='flex flex-col w-full md:w-96 gap-5 '>No user</div>}
-      <ClassesAndGrades />
+      <ClassesAndGrades usersCourses={userCourses}/>
     </div>
 
   );

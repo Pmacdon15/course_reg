@@ -1,6 +1,6 @@
 CREATE TABLE
   CRAvailableCourses (
-    id SERIAL4 PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
     brief_description VARCHAR(255) NOT NULL,
     long_description TEXT,
@@ -11,11 +11,28 @@ CREATE TABLE
 
 CREATE TABLE
   crUsersCourses (
-    userEmail VARCHAR(255) PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
     courseID INTEGER REFERENCES CRAvailableCourses (id) ON DELETE CASCADE,
     registered BOOLEAN DEFAULT FALSE,
     UNIQUE (userEmail, courseID)
   );
+
+CREATE TABLE
+  CRClasses (
+    id SERIAL PRIMARY KEY,
+    classCode VARCHAR(255) UNIQUE NOT NULL,
+    className VARCHAR(255) NOT NULL,
+    courseId INTEGER,
+    CONSTRAINT fk_courseId FOREIGN KEY (courseId) REFERENCES CRAvailableCourses(id),
+    availableDurringFall BOOLEAN,
+    availableDurringWinter BOOLEAN,
+    availableDurringSpring BOOLEAN,
+    prerequisite1 INTEGER REFERENCES CRClasses(id) ON DELETE CASCADE NULL,
+    prerequisite2 INTEGER REFERENCES CRClasses(id) ON DELETE CASCADE NULL,
+    prerequisite3 INTEGER REFERENCES CRClasses(id) ON DELETE CASCADE NULL,
+    prerequisite4 INTEGER REFERENCES CRClasses(id) ON DELETE CASCADE NULL  
+  );  
 
 INSERT INTO
   CRAvailableCourses (
@@ -58,4 +75,259 @@ VALUES
 INSERT INTO
   crUsersCourses (userEmail, courseID, registered)
 VALUES
-  ('your email here', 1, TRUE);
+  ('Your email here', 1, TRUE),
+  ('Your email here', 2, FALSE);
+
+INSERT INTO CRClasses (
+  classCode,
+  className,
+  courseId,
+  availableDurringFall,
+  availableDurringWinter,
+  availableDurringSpring,
+  prerequisite1,
+  prerequisite2,
+  prerequisite3,
+  prerequisite4
+) VALUES (
+  'MATH901',
+  'Math for the computer industry',
+  1,
+  TRUE,
+  TRUE,
+  FALSE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'MGMT1103',
+  'Essential skills for teams collaboration',
+  1,
+  TRUE,
+  TRUE,
+  FALSE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'SODV1101',
+  'Programming Fundamentals',
+  1,
+  TRUE,
+  TRUE,
+  FALSE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'TECH1101',
+  'Web and Internet fundamentals',
+  1,
+  TRUE,
+  TRUE,
+  FALSE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),(
+  'TECH1102',
+  'Internet of Things',
+  1,
+  TRUE,
+  TRUE,
+  FALSE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'DATA1201',
+  'Introduction to Relational Databases',
+  1,
+  FALSE,
+  TRUE,
+  TRUE,
+  3,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'DESN2301',
+  'User Experience Design',
+  1,
+  FALSE,
+  TRUE,
+  TRUE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'SODV1201',
+  'Introduction to Web Programming',
+  1,
+  FALSE,
+  TRUE,
+  TRUE,
+  3,
+  4,
+  NULL,
+  NULL
+),
+(
+  'SODV1202',
+  'Introduction to object oriented programming',
+  1,
+  FALSE,  
+  TRUE,
+  TRUE,
+  1,
+  3,
+  NULL,
+  NULL
+),
+(
+  'TECH1201',
+  'Networking Essentials',
+  1,
+  FALSE,
+  TRUE,
+  TRUE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'DATA2201',
+  'Relational Databases',
+  1,
+  TRUE,
+  FALSE,  
+  FALSE,
+  6,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'MGMT1104',
+  'Project Management in Software',
+  1,
+  TRUE,
+  FALSE,  
+  FALSE,
+  2,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'SODV2101',
+  'Rapid Application Development',
+  1,
+  TRUE,
+  FALSE,  
+  FALSE,
+  6,
+  9,
+  NULL,
+  NULL
+),
+(
+  'SODV2201',
+  'Web Programing',
+  1,
+  TRUE,
+  FALSE,  
+  FALSE,
+  6,
+  8,
+  9,  
+  NULL
+),
+(
+  'SODV2202',
+  'Object Oriented Programing',
+  1,
+  TRUE,
+  FALSE,  
+  FALSE,
+  6,
+  9,
+  NULL,
+  NULL
+),
+(
+  'SODV2203',
+  'Introduction to Game and Simulation Programming',
+  1,
+  FALSE,
+  TRUE,  
+  FALSE,
+  15,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'SODV3202',
+  'Mobile Application Development',
+  1,
+  FALSE,
+  TRUE,  
+  FALSE,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'SODV2401',
+  'Algorithms and Data Structures',
+  1,
+  FALSE,
+  TRUE,  
+  FALSE,
+  9,
+  NULL,
+  NULL,
+  NULL
+),
+(
+  'SODV2999',
+  'Software Development Capstone Project',
+  1,
+  FALSE,
+  TRUE,  
+  FALSE,
+  7,
+  12,
+  13,
+  15
+),
+(
+  'TECH2102',
+  'Enterprise Computing',
+  1,
+  FALSE,
+  TRUE,  
+  FALSE,
+  10,
+  14,
+  NULL,
+  NULL
+);
+
+select * from CRClasses
+Drop Table CRClasses

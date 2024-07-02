@@ -4,7 +4,7 @@ export default async function UserCourses({ usersCourses }: { usersCourses: User
     // const userCourses = await getUserCourses(email);
     // console.log(userCourses);
     return (
-        <div className="md:h-4/6 h-min w-full  text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md gap- p-4">
+        <div className="md:h-4/6 h-min w-full  text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
             <div >
                 <h2 className="text-xl font-bold">Your Current Courses:</h2>
                 {usersCourses.length === 0 ? (
@@ -17,7 +17,6 @@ export default async function UserCourses({ usersCourses }: { usersCourses: User
                             <p>at our {course.school}</p>
                             <p>over {course.terms} terms</p>
                         </div>
-
                     ))
                 )}
             </div>
@@ -27,7 +26,7 @@ export default async function UserCourses({ usersCourses }: { usersCourses: User
                     <p>No past courses to list.</p>
                 ) : (
                     usersCourses.filter((course) => !course.registered).map((course) => (
-                        <div key={course.id} className="mb-4">
+                        <div key={`past-course-${course.id}`} className="mb-4">
                             <h4>{course.name}</h4>
                         </div>
                     ))
