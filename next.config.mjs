@@ -1,8 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-      domains: ['workoscdn.com'],
-    },
-  };
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'workoscdn.com',
+        port: '',
+      },
+    ],
+  },
+};
 
 export default nextConfig;

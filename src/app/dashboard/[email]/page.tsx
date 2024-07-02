@@ -1,6 +1,6 @@
 import AllCourses from '@/app/dashboard/allCourses';
 import ClassesAndGrades from '@/app/dashboard/classesAndGrades';
-import UserSection from '@/app/dashboard/userSection';
+import UserSection from '@/app/dashboard/userSection/userSection';
 import { getUser } from '@workos-inc/authkit-nextjs'
 import { getAllCourses, getUserCourses } from '@/app/dashboard/actions';
 
@@ -16,7 +16,7 @@ export default async function Page() {
     <div className='flex flex-wrap lg:my-8 content-center justify-center gap-5 p-4'>
       <AllCourses courses={courses} />
       {user ? <UserSection user={user} userCourses={userCourses} /> :
-        <div>No user</div>}
+        <div className='flex flex-col w-full md:w-96 gap-5 '>No user</div>}
       <ClassesAndGrades />
     </div>
 
