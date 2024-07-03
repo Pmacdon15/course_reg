@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { Course, UserCourse } from '@/app/dashboard/types';
+import { Course, UserCourse, UserGradedClass } from '@/app/dashboard/types';
 
 export async function getAllCourses() {
     'use server';
@@ -15,25 +15,49 @@ export async function getAllCourses() {
     }
 }
 export async function getUserCourses(email: string) {
-    const results = await sql`
+    try {
+        const results = await sql`
        SELECT 
-        AC.name, 
-        AC.brief_description,
-        AC.school,
-        AC.terms,
-        CC.registered,
-        COUNT(CR.id)::int AS total_classes
-        FROM 
-        CRAvailableCourses AC
+            AC.id,
+            AC.name, 
+            AC.brief_description,
+            AC.school,
+            AC.terms,
+            CC.registered,
+            COUNT(CR.id)::int AS total_classes
+        FROM CRAvailableCourses AC
         JOIN crUsersCourses CC ON AC.id = CC.courseID
         LEFT JOIN CRClasses CR ON AC.id = CR.courseId
         WHERE 
             CC.userEmail = ${email}
         GROUP BY 
-  AC.name, AC.brief_description, AC.school, AC.terms, CC.registered
+    AC.id, AC.name, AC.brief_description, AC.school, AC.terms, CC.registered
     `;
-    if (results.rows.length > 0) {
         return results.rows as UserCourse[];
+
+    } catch (error) {
+        console.error((error as Error).message);
+        return [];
     }
-    return [];
+}
+
+export async function getUserGradedClasses(email: string) {
+    try {
+        const results = await sql`
+        SELECT
+            id,
+            classId,
+            courseId,
+            grade
+        FROM CRUserGradedClasses
+        WHERE userEmail = ${email}
+        `;
+        if (results.rows.length < 1) {
+            throw new Error('No graded classes found');
+        }
+        return results.rows as UserGradedClass[];
+    } catch (error) {
+        console.error((error as Error).message);
+        return [];
+    }
 }

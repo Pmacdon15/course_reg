@@ -34,6 +34,15 @@ CREATE TABLE
     prerequisite4 INTEGER REFERENCES CRClasses(id) ON DELETE CASCADE NULL  
   );  
 
+CREATE TABLE 
+  CRUserGradedClasses (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    classId INTEGER REFERENCES CRClasses(id) ON DELETE CASCADE,
+    courseId INTEGER REFERENCES CRAvailableCourses(id) ON DELETE CASCADE,
+    grade INTEGER
+  );
+
 INSERT INTO
   CRAvailableCourses (
     name,
@@ -71,6 +80,7 @@ VALUES
     'Degree',
     'School of Technology'
   );
+
 
 INSERT INTO
   crUsersCourses (userEmail, courseID, registered)
@@ -329,6 +339,15 @@ INSERT INTO CRClasses (
   NULL
 );
 
-select * from CRClasses
-Drop Table CRClasses
-select * from  crUsersCourses
+ INSERT INTO
+  CRUserGradedClasses (userEmail, classId, courseId, grade)
+  VALUES
+  ('Your email here', 1, 1, 93),
+  ('Your email here', 2, 1,95),
+  ('Your email here', 3, 1 ,89),
+  ('Your email here', 4, 1, 100),
+  ('Your email here', 5, 1, 93);
+
+-- select * from CRClasses
+-- Drop Table CRClasses
+-- select * from  crUsersCourses

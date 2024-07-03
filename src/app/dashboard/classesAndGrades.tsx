@@ -1,10 +1,10 @@
 'use client';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
-import { UserCourse } from '@/app/dashboard/types';
+import { UserCourse, UserGradedClass } from '@/app/dashboard/types';
 import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
-export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserCourse[] }) {
+export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { usersCourses: UserCourse[], userGradedClasses: UserGradedClass[]}) {
   const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
   const handleNextCourse = () => {
@@ -22,6 +22,8 @@ export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserC
   });
 
   const currentCourse = usersCourses[currentCourseIndex];
+  
+  const numberOfGradedClassesForCurrentCourse = userGradedClasses.filter(gradedClass => gradedClass.courseid === currentCourse.id);
 
   return (
     <div className="w-full md:w-96 justify-center text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
@@ -31,7 +33,7 @@ export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserC
         <div className='flex flex-col justify-center items-center'>
           <h2>{currentCourse.name}</h2>
           <Gauge
-            value={5}
+            value={numberOfGradedClassesForCurrentCourse.length}
             width={200}
             height={200}
             startAngle={-110}
@@ -44,12 +46,11 @@ export default function ClassesAndGrades({ usersCourses }: { usersCourses: UserC
               },
             }}
             text={
-              ({ value, valueMax }) => `${value} / ${currentCourse.total_classes}`
+              ({ value, valueMax }) => `${numberOfGradedClassesForCurrentCourse.length} / ${currentCourse.total_classes}`
             }
           />
           <h3>
-
-            <p>Classes: 15/{currentCourse.total_classes} Completed.</p>
+            <p>Classes: {numberOfGradedClassesForCurrentCourse.length}/{currentCourse.total_classes} Completed.</p>
           </h3>
         </div>
       )}

@@ -15,3 +15,12 @@ export type UserCourse = {
   registered: boolean;
   total_classes: number;
 }
+
+export type UserGradedClass = {
+  id: number
+  classId: number
+  courseid: number
+  grade: number
+}
+
+
