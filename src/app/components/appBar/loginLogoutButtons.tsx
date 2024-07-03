@@ -1,5 +1,4 @@
 import { getUser, getSignInUrl } from '@workos-inc/authkit-nextjs';
-// import middleware from '/middleware';
 import SignInButton from './signInButton';
 import { Button } from '@mui/material';
 import { cookies } from 'next/headers'
