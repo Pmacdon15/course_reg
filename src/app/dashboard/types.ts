@@ -21,6 +21,7 @@ export type UserGradedClass = {
   classId: number
   courseid: number
   grade: number
+  term: string
 }
 
 
