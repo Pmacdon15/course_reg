@@ -4,7 +4,7 @@ export default async function UserCourses({ usersCourses }: { usersCourses: User
     // const userCourses = await getUserCourses(email);
     // console.log(userCourses);
     return (
-        <div className="md:h-4/6 h-min w-full  text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
+        <div className=" h-96 md:h-4/6  w-full overflow-auto resize-y sm:resize-none text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
             <div >
                 <h2 className="text-xl font-bold">Your Current Courses:</h2>
                 {usersCourses.length === 0 ? (
