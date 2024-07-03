@@ -53,7 +53,7 @@ export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { 
   }
 
   return (
-    <div className="w-full md:w-96 justify-center text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
+    <div className="min-h-96 lg:h-[600px] w-full md:w-96 justify-center text-center content-center bg-gradient-to-r from-blue-400 to-blue-200 rounded-lg shadow-md p-4">
 
       <h1 className="text-xl font-bold text-center">Classes and Grades</h1>
       {currentCourse && (
