@@ -31,10 +31,10 @@ export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { 
     const currentTerm = termMap.get(term);
 
     if (currentTerm) {
-      currentTerm.sum += grade;
+      currentTerm.sum += getGPA(grade);
       currentTerm.count++;
     } else {
-      termMap.set(term, { sum: grade, count: 1 });    
+      termMap.set(term, { sum:getGPA(grade), count: 1 });    
     }
   });
 
@@ -81,7 +81,7 @@ export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { 
           </h3>          
             {Array.from(termMap).map(([term, value]) => (
               <div key={term}>
-                 <p>Term {term}: GPA {getGPA(value.sum / value.count)}</p>
+                 <p>Term {term}: GPA {value.sum/value.count} for {value.count} classes</p>
               </div>
             ))}
           
