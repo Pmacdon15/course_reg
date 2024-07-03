@@ -17,7 +17,7 @@ export default async function Page() {
     <div className='flex flex-wrap lg:my-8 content-center justify-center gap-5 p-4'>
       <AllCourses courses={courses} />
       {user ? <UserSection user={user} userCourses={userCourses} /> :
-        <div className='flex flex-col w-full md:w-96 gap-5 '>No user</div>}
+        <div className='flex flex-col w-full md:w-96 gap-5 bg-gradient-to-r from-blue-400 to-blue-200 '>No user</div>}
       <ClassesAndGrades usersCourses={userCourses} userGradedClasses={userGradedClasses}/>
     </div>
 
