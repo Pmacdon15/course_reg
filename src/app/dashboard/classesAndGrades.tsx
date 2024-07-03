@@ -28,18 +28,17 @@ export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { 
   numberOfGradedClassesForCurrentCourse.forEach(gradedClass => {
     const term = gradedClass.term
     const grade = gradedClass.grade;
-
     const currentTerm = termMap.get(term);
+
     if (currentTerm) {
       currentTerm.sum += grade;
       currentTerm.count++;
     } else {
-      termMap.set(term, { sum: grade, count: 1 });
+      termMap.set(term, { sum: grade, count: 1 });    
     }
   });
 
   function getGPA(average:number) {
-    if (average >= 95) return 4.0;
     if (average >= 90) return 4.0;
     if (average >= 85) return 3.67;
     if (average >= 80) return 3.33;
