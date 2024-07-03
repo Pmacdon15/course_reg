@@ -15,6 +15,7 @@ export async function getAllCourses() {
     }
 }
 export async function getUserCourses(email: string) {
+    'use server'
     try {
         const results = await sql`
        SELECT 
@@ -42,13 +43,15 @@ export async function getUserCourses(email: string) {
 }
 
 export async function getUserGradedClasses(email: string) {
+    'use server'
     try {
         const results = await sql`
         SELECT
             id,
             classId,
             courseId,
-            grade
+            grade,
+            term
         FROM CRUserGradedClasses
         WHERE userEmail = ${email}
         `;

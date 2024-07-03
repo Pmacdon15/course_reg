@@ -351,7 +351,12 @@ VALUES
   ('Your email here', 2, 1, 95, 1),
   ('Your email here', 3, 1, 89, 1),
   ('Your email here', 4, 1, 100, 1),
-  ('Your email here', 5, 1, 93, 1);
+  ('Your email here', 5, 1, 93, 1),
+  ('Your email here', 6, 1, 92, 2),
+  ('Your email here', 7, 1, 91, 2),
+  ('Your email here', 8, 1, 94, 2),
+  ('Your email here', 9, 1, 100, 2),
+  ('Your email here', 10, 1, 98, 2);
 
 -- select * from CRClasses
 -- Drop Table CRClasses
