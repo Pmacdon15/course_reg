@@ -31,9 +31,12 @@ export type Class ={
   availableFall: boolean,
   availableWinter: boolean,
   availableSpring: boolean,
-  prerequisite1: string,
-  prerequisite2: string,
-  prerequisite3: string,
-  prerequisite4: string,
+  prerequisite1: number,
+  prerequisite2: number,
+  prerequisite3: number,
+  prerequisite4: number,
 }
 
+export type UserRegisteredClass = {
+  classid: number
+}

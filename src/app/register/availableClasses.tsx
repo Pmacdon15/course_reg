@@ -1,12 +1,13 @@
 'use client';
 import { useState } from 'react';
-import { Class, UserGradedClass, UserCourse } from "@/app/types";
+import { Class, UserGradedClass, UserCourse, UserRegisteredClass } from "@/app/types";
 import { Button } from '@mui/material';
+import ButtonClassInfo from '@/app/register/buttonClassInfo';
 
-function buildClassMap(availableClasses: Class[]): Map<number, string[]> {
-    const classMap: Map<number, string[]> = new Map();
+function buildClassMap(availableClasses: Class[]): Map<number, number[]> {
+    const classMap: Map<number, number[]> = new Map();
     availableClasses.forEach((availableClass: Class) => {
-        const prerequisites: string[] = [];
+        const prerequisites: number[] = [];
         if (availableClass.prerequisite1) {
             prerequisites.push(availableClass.prerequisite1);
         }
@@ -25,8 +26,59 @@ function buildClassMap(availableClasses: Class[]): Map<number, string[]> {
     });
     return classMap;
 }
+function filterClasses({availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex}: {
+    availableClasses: Class[],
+    userGradedClasses: UserGradedClass[],
+    userCourses: UserCourse[],
+    userRegisteredClasses: UserRegisteredClass[],
+    currentCourseIndex: number
+}) {
+    // Get the current course based on currentCourseIndex
+    const currentCourse = userCourses[currentCourseIndex];
 
-export default function AvailableClasses({ availableClasses, userGradedClasses, userCourses }: { availableClasses: Class[], userGradedClasses: UserGradedClass[], userCourses: UserCourse[] }) {
+    // Filter classes for the current course
+    const classesForCurrentCourse = availableClasses.filter((availableClass) => availableClass.courseid === currentCourse.id);
+
+    // Filter classes that the user has not graded
+    const ungradedClasses = classesForCurrentCourse.filter((availableClass) => !userGradedClasses.some((gradedClass) => gradedClass.classid === availableClass.id));
+
+    // Build a map of class id to prerequisites
+    const prerequisitesMap = buildClassMap(availableClasses);
+
+    // Remove registered classes from prerequisitesMap
+    userRegisteredClasses.forEach((registeredClass) => {
+        const classId = registeredClass.classid;
+
+        if (prerequisitesMap.has(classId)) {
+            prerequisitesMap.delete(classId);
+        }
+
+        prerequisitesMap.forEach((value, key) => {
+            if (value.includes(classId)) {
+                prerequisitesMap.set(key, value.filter((prerequisite) => prerequisite !== classId));
+            }
+            if (prerequisitesMap.get(key)?.length === 0) {
+                prerequisitesMap.delete(key);
+            }
+        });
+    });
+
+    // Filter out classes that have prerequisites that are ungraded and not registered for
+    const classesWithoutPrerequisites = ungradedClasses.filter((availableClass) => !prerequisitesMap.has(availableClass.id));
+
+    return classesWithoutPrerequisites;
+}
+
+
+export default function AvailableClasses(
+    { availableClasses, userGradedClasses, userCourses, userRegisteredClasses }:
+        {
+            availableClasses: Class[],
+            userGradedClasses: UserGradedClass[],
+            userCourses: UserCourse[],
+            userRegisteredClasses: UserRegisteredClass[]
+        }
+) {
 
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
@@ -45,27 +97,11 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
     });
 
     const currentCourse = userCourses[currentCourseIndex];
-    // Filter classes for the current course
-    const classesForCurrentCourse = availableClasses.filter((availableClass: Class) => availableClass.courseid === currentCourse.id);
-    // Filter classes that the user has not graded
-    const ungradedClasses = classesForCurrentCourse.filter((availableClass: Class) => !userGradedClasses.some((gradedClass: UserGradedClass) => gradedClass.classid === availableClass.id));
-    // Build a map of class id to prerequisites
-    const prerequisitesMap = buildClassMap(availableClasses);
-    //Todo remove classes that have prerequisites that is registered for or has been graded, add db table for classes registered by user
-    const  ungradedNotRegisteredClassesWithoutPrerequisites = "";
-    //filter out classes that have prerequisites  that are ungraded and not registered for
-    const classesWithoutPrerequisites = ungradedClasses.filter((availableClass: Class) => !prerequisitesMap.has(availableClass.id));
-   
-    //Todo  test  ungradedNotRegisteredWithoutPrerequisitesClasses
-    console.log( classesWithoutPrerequisites);
-
-
-
+    const classesWithoutPrerequisites = filterClasses({availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex});
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
             <h1 className="text-2xl text-center font-bold mb-4">Available Classes for your programs</h1>
-
             {currentCourse && (
                 <div className='flex flex-col justify-center items-center'>
                     <h1 className="text-xl font-bold text-center">{currentCourse.name}</h1>
@@ -75,7 +111,7 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
                             {//Todo  replace classesWithoutPrerequisites with ungradedNotRegisteredClasses after applying filtering
                                 classesWithoutPrerequisites.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
-                                        <p>{availableClass.classname}</p>
+                                        <ButtonClassInfo className={availableClass.classname} />                                            
                                     </li>
                                 ))}
                         </ul>
@@ -97,3 +133,5 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
     );
 
 };
+
+

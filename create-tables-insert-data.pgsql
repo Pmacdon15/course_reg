@@ -346,7 +346,7 @@ CREATE TABLE
   );
 
 INSERT INTO
-  CRUserGradedClasses (userEmail, classId, courseId, grade, term)
+  CRUserGradedClasses (userEmail, classId, grade, term)
 VALUES
   ('Your email here', 1, 93, 1),
   ('Your email here', 2, 95, 1),
@@ -359,6 +359,27 @@ VALUES
   ('Your email here', 9, 100, 2),
   ('Your email here', 10, 98, 2);
 
--- select * from CRClasses
--- Drop Table CRClasses
--- select * from  crUsersCourses
+-- MARK: CRUserRegisteredClasses
+CREATE TABLE
+  CRUserRegisteredClasses (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE
+  );
+
+INSERT INTO
+  CRUserRegisteredClasses (userEmail, classId)
+VALUES
+  ('pmacdonald15@gmail.com', 1),
+  ('pmacdonald15@gmail.com', 2),
+  ('pmacdonald15@gmail.com', 3),
+  ('pmacdonald15@gmail.com', 4),
+  ('pmacdonald15@gmail.com', 5),
+  ('pmacdonald15@gmail.com', 6),
+  ('pmacdonald15@gmail.com', 7),
+  ('pmacdonald15@gmail.com', 8),
+  ('pmacdonald15@gmail.com', 9),
+  ('pmacdonald15@gmail.com', 10);
+
+
+  select * From CRClasses;
