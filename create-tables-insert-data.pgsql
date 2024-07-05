@@ -366,25 +366,17 @@ CREATE TABLE
     id SERIAL PRIMARY KEY,
     userEmail VARCHAR(255),
     classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
-    graded BOOLEAN DEFAULT FALSE
+    termNumber INTEGER NOT NULL,
+    termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
   );
 
 INSERT INTO
-  CRUserRegisteredClasses (userEmail, classId)
+  CRUserRegisteredClasses (userEmail, classId, termNumber, termSeason)
 VALUES
-  ('pmacdonald15@gmail.com', 1),
-  ('pmacdonald15@gmail.com', 2),
-  ('pmacdonald15@gmail.com', 3),
-  ('pmacdonald15@gmail.com', 4),
-  ('pmacdonald15@gmail.com', 5),
-  ('pmacdonald15@gmail.com', 6),
-  ('pmacdonald15@gmail.com', 7),
-  ('pmacdonald15@gmail.com', 8),
-  ('pmacdonald15@gmail.com', 9),
-  ('pmacdonald15@gmail.com', 10),
-  ('pmacdonald15@gmail.com', 11);
+  ('pmacdonald15@gmail.com', 11, 3, 'Fall');
+  
 
-  -- drop table CRUserRegisteredClasses
-  -- select * from crusergradedclasses
-  -- select * from crclasses
-  -- select * from cruserregisteredclasses
+-- drop table CRUserRegisteredClasses
+-- select * from crusergradedclasses
+-- select * from crclasses
+-- select * from cruserregisteredclasses
