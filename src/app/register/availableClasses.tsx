@@ -19,13 +19,15 @@ function buildClassMap(availableClasses: Class[]): Map<number, string[]> {
         if (availableClass.prerequisite4) {
             prerequisites.push(availableClass.prerequisite4);
         }
-        classMap.set(availableClass.id, prerequisites);
+        if (prerequisites.length > 0) {
+            classMap.set(availableClass.id, prerequisites);
+        }
     });
     return classMap;
 }
 
-export default function AvailableClasses({ availableClasses, userGradedClasses, userCourses }: {  availableClasses: Class[], userGradedClasses: UserGradedClass[], userCourses: UserCourse[] }) {
-    
+export default function AvailableClasses({ availableClasses, userGradedClasses, userCourses }: { availableClasses: Class[], userGradedClasses: UserGradedClass[], userCourses: UserCourse[] }) {
+
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
     const handleNextCourse = () => {
@@ -37,31 +39,36 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
     };
 
     userCourses.sort((a, b) => {
-      if (a.registered && !b.registered) return -1;
-      if (!a.registered && b.registered) return 1;
-      return 0;
+        if (a.registered && !b.registered) return -1;
+        if (!a.registered && b.registered) return 1;
+        return 0;
     });
-    
+
     const currentCourse = userCourses[currentCourseIndex];
     const classesForCurrentCourse = availableClasses.filter((availableClass: Class) => availableClass.courseid === currentCourse.id);
-    const ungradedClasses = classesForCurrentCourse.filter((availableClass: Class) => !userGradedClasses.some((gradedClass: UserGradedClass) => gradedClass.classid === availableClass.id));    
-    const prerequisitesMap = buildClassMap(availableClasses); 
+    const ungradedClasses = classesForCurrentCourse.filter((availableClass: Class) => !userGradedClasses.some((gradedClass: UserGradedClass) => gradedClass.classid === availableClass.id));
+    const prerequisitesMap = buildClassMap(availableClasses);
+    const classesWithoutPrerequisites = ungradedClasses.filter((availableClass: Class) => !prerequisitesMap.has(availableClass.id));
+
     
-    
-    
-    
+ 
+    console.log( classesWithoutPrerequisites);
+
+
+
+
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
             <h1 className="text-2xl text-center font-bold mb-4">Available Classes for your programs</h1>
-            
+
             {currentCourse && (
                 <div className='flex flex-col justify-center items-center'>
                     <h1 className="text-xl font-bold text-center">{currentCourse.name}</h1>
                     <h2>Available Classes:</h2>
                     {currentCourse && (
                         <ul>
-                            {                                
-                                ungradedClasses.map((availableClass: Class) => (
+                            {
+                                classesWithoutPrerequisites.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
                                         <p>{availableClass.classname}</p>
                                     </li>
@@ -83,5 +90,5 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
             </div>
         </div>
     );
-    
+
 };
