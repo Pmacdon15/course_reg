@@ -1,6 +1,6 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
-import {useRouter} from 'next/navigation';
+import { useRouter,useSearchParams } from 'next/navigation';
 import { Class, UserGradedClass, UserCourse, UserRegisteredClass } from "@/app/types";
 import { Button } from '@mui/material';
 import ButtonClassInfo from '@/app/register/buttonClassInfo';
@@ -28,7 +28,7 @@ function buildClassMap(availableClasses: Class[]): Map<number, number[]> {
     return classMap;
 }
 function filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm }: {
-    userEmail:string,
+    userEmail: string,
     availableClasses: Class[],
     userGradedClasses: UserGradedClass[],
     userCourses: UserCourse[],
@@ -45,12 +45,12 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
     // Filter classes that are available for the current term
     const classesFilteredByTerm = availableClasses.filter((availableClass) => {
         if (currentTerm === 'Fall') {
-            return availableClass.availablefall === true;          
+            return availableClass.availablefall === true;
         } else if (currentTerm === 'Winter') {
             return availableClass.availablewinter === true;
         } else if (currentTerm === 'Spring') {
             return availableClass.availablespring === true;
-        }    
+        }
         return false; // Default to false if term doesn't match any condition
     });
 
@@ -95,7 +95,7 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
 export default function AvailableClasses(
     { userEmail, availableClasses, userGradedClasses, userCourses, userRegisteredClasses }:
         {
-            userEmail:string,
+            userEmail: string,
             availableClasses: Class[],
             userGradedClasses: UserGradedClass[],
             userCourses: UserCourse[],
@@ -103,6 +103,7 @@ export default function AvailableClasses(
         }
 ) {
     const router = useRouter();
+    const searchParams = useSearchParams()
     // Handle switching between courses
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
@@ -113,10 +114,10 @@ export default function AvailableClasses(
     const handlePrevCourse = () => {
         setCurrentCourseIndex((prevIndex) => prevIndex - 1);
     };
-    // Handle switching between terms
-    
-    const [currentTerm, setCurrentTerm] = useState('Fall');  
-    
+
+    // Handle switching between terms    
+    const [currentTerm, setCurrentTerm] = useState('Fall');
+    // Create query string for url
     const createQueryString = useCallback(
         (currentTerm: string)
             : string => {
@@ -124,11 +125,19 @@ export default function AvailableClasses(
         },
         [currentTerm]
     );
+    // get term from url then set it to currentTerm
+    useEffect(() => {
+        const newTerm = searchParams.get('term');
+        if (newTerm) {
+            setCurrentTerm(newTerm);
+        }       
+    }, [router]);   
 
-   useEffect(() => {
+    // Update url when term changes
+    useEffect(() => {
         router.push(`/register/${createQueryString(currentTerm)}`);
     }
-    ,[currentTerm]);
+        , [currentTerm]);
 
     const handleSwitchToFallTerm = () => {
         setCurrentTerm('Fall');
@@ -153,9 +162,9 @@ export default function AvailableClasses(
     });
 
     const currentCourse = userCourses[currentCourseIndex];
-    const classesWithoutPrerequisites = filterClasses({userEmail, availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
-    
-   
+    const classesWithoutPrerequisites = filterClasses({ userEmail, availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
+
+
 
 
     return (
