@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { Course, UserCourse, UserGradedClass } from '@/app/dashboard/types';
+import { Course, UserCourse, UserGradedClass, Class } from '@/app/types';
 
 export async function getAllCourses() {
     'use server';
@@ -59,6 +59,30 @@ export async function getUserGradedClasses(email: string) {
             throw new Error('No graded classes found');
         }
         return results.rows as UserGradedClass[];
+    } catch (error) {
+        console.error((error as Error).message);
+        return [];
+    }
+}
+
+export async function getClassesForUserRegisteredCourses(email: string) {
+    'use server'
+    try {
+        const results = await sql`
+        SELECT
+            crClasses.id,
+            crClasses.courseId,
+            crClasses.availableFall,
+            crClasses.availableWinter,
+            crClasses.availableSpring
+        FROM crClasses 
+        JOIN crUsersCourses ON CRClasses.courseId = crUsersCourses.courseID
+        WHERE crUsersCourses.userEmail = ${email}
+        `;
+        if (results.rows.length < 1) {
+            throw new Error('No classes found');
+        }
+        return results.rows as Class[];
     } catch (error) {
         console.error((error as Error).message);
         return [];

@@ -1,4 +1,4 @@
-import { UserCourse } from "@/app/dashboard/types";
+import { UserCourse } from "@/app/types";
 
 export default async function UserCourses({ usersCourses }: { usersCourses: UserCourse[] }) {    
     return (

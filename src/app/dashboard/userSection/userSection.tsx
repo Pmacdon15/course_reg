@@ -1,4 +1,4 @@
-import { UserCourse} from "@/app/dashboard/types";
+import { UserCourse} from "@/app/types";
 import UserInfo from "@/app/dashboard/userSection/userInfo";
 import UserCourses from "@/app/dashboard/userSection/userCourses";
 export default function UserSection({ user, userCourses }: { user: any, userCourses: UserCourse[] }) {

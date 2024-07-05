@@ -2,7 +2,7 @@ import AllCourses from '@/app/dashboard/allCourses';
 import ClassesAndGrades from '@/app/dashboard/classesAndGrades';
 import UserSection from '@/app/dashboard/userSection/userSection';
 import { getUser } from '@workos-inc/authkit-nextjs'
-import { getAllCourses, getUserCourses, getUserGradedClasses } from '@/app/dashboard/actions';
+import { getAllCourses, getUserCourses, getUserGradedClasses } from '@/app/actions';
 
 
 export default async function Page() {

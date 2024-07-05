@@ -24,4 +24,14 @@ export type UserGradedClass = {
   term: string
 }
 
+export type Class ={
+  id: number
+  courseId: number
+  name: string
+  description: string
+  term: string
+  availableFall: boolean,
+  availableWinter: boolean,
+  availableSpring: boolean,
+}
 
