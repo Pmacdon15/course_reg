@@ -47,12 +47,13 @@ export async function getUserGradedClasses(email: string) {
     try {
         const results = await sql`
         SELECT
-            id,
+            CRUserGradedClasses.id,
             classId,
-            courseId,
+            crclasses.courseid,
             grade,
             term
         FROM CRUserGradedClasses
+        JOIN CRClasses ON CRUserGradedClasses.classId = CRClasses.id
         WHERE userEmail = ${email}
         `;
         if (results.rows.length < 1) {

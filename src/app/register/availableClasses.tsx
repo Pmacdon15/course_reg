@@ -45,13 +45,18 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
     });
 
     const currentCourse = userCourses[currentCourseIndex];
+    // Filter classes for the current course
     const classesForCurrentCourse = availableClasses.filter((availableClass: Class) => availableClass.courseid === currentCourse.id);
+    // Filter classes that the user has not graded
     const ungradedClasses = classesForCurrentCourse.filter((availableClass: Class) => !userGradedClasses.some((gradedClass: UserGradedClass) => gradedClass.classid === availableClass.id));
+    // Build a map of class id to prerequisites
     const prerequisitesMap = buildClassMap(availableClasses);
+    //Todo remove classes that have prerequisites that is registered for or has been graded, add db table for classes registered by user
+    const  ungradedNotRegisteredClassesWithoutPrerequisites = "";
+    //filter out classes that have prerequisites  that are ungraded and not registered for
     const classesWithoutPrerequisites = ungradedClasses.filter((availableClass: Class) => !prerequisitesMap.has(availableClass.id));
-
-    
- 
+   
+    //Todo  test  ungradedNotRegisteredWithoutPrerequisitesClasses
     console.log( classesWithoutPrerequisites);
 
 
@@ -67,7 +72,7 @@ export default function AvailableClasses({ availableClasses, userGradedClasses, 
                     <h2>Available Classes:</h2>
                     {currentCourse && (
                         <ul>
-                            {
+                            {//Todo  replace classesWithoutPrerequisites with ungradedNotRegisteredClasses after applying filtering
                                 classesWithoutPrerequisites.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
                                         <p>{availableClass.classname}</p>

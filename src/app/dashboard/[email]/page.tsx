@@ -11,8 +11,9 @@ export default async function Page() {
   // Get all courses and user courses and graded classes
   const courses = await getAllCourses();
   const userCourses = await getUserCourses(user.user?.email);
+  
   const userGradedClasses = await getUserGradedClasses(user.user?.email);
-   
+  console.log(userGradedClasses);
   return (
     <div className='flex flex-wrap lg:my-8 content-center justify-center gap-5 p-4'>
       <AllCourses courses={courses} />
