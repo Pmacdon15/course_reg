@@ -26,7 +26,7 @@ function buildClassMap(availableClasses: Class[]): Map<number, number[]> {
     });
     return classMap;
 }
-function filterClasses({availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex}: {
+function filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex }: {
     availableClasses: Class[],
     userGradedClasses: UserGradedClass[],
     userCourses: UserCourse[],
@@ -86,7 +86,7 @@ export default function AvailableClasses(
             userRegisteredClasses: UserRegisteredClass[]
         }
 ) {
-
+    // Handle switching between courses
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
     const handleNextCourse = () => {
@@ -96,6 +96,20 @@ export default function AvailableClasses(
     const handlePrevCourse = () => {
         setCurrentCourseIndex((prevIndex) => prevIndex - 1);
     };
+    // Handle switching between terms
+    const [currentTerm, setCurrentTerm] = useState('Fall');
+
+    const handleSwitchToFallTerm = () => {
+        setCurrentTerm('Fall');
+    };
+
+    const handleSwitchToWinterTerm = () => {
+        setCurrentTerm('Winter');
+    };
+
+    const handleSwitchToSpringTerm = () => {
+        setCurrentTerm('Spring');
+    };
 
     userCourses.sort((a, b) => {
         if (a.registered && !b.registered) return -1;
@@ -104,7 +118,7 @@ export default function AvailableClasses(
     });
 
     const currentCourse = userCourses[currentCourseIndex];
-    const classesWithoutPrerequisites = filterClasses({availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex});
+    const classesWithoutPrerequisites = filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex });
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
@@ -113,19 +127,30 @@ export default function AvailableClasses(
                 <div className='flex flex-col justify-center items-center'>
                     <h1 className="text-xl font-bold text-center">{currentCourse.name}</h1>
                     <h2>Available Classes:</h2>
+                    <div className="flex justify-center gap-4">
+                        <Button onClick={handleSwitchToFallTerm} disabled={currentTerm === 'Fall'}>
+                            Fall
+                        </Button>
+                        <Button onClick={handleSwitchToWinterTerm} disabled={currentTerm === 'Winter'}>
+                            Winter
+                        </Button>
+                        <Button onClick={handleSwitchToSpringTerm} disabled={currentTerm === 'Spring'}>
+                            Spring
+                        </Button>
+                    </div>
                     {currentCourse && (
                         <ul>
                             {
                                 classesWithoutPrerequisites.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
-                                        <ButtonClassInfo className={availableClass.classname} term={"Fall"}/>                                            
+                                        <ButtonClassInfo className={availableClass.classname} term={currentTerm} />
                                     </li>
                                 ))}
                         </ul>
                     )}
                 </div>
             )}
-            <div className="flex justify-center mt-4 ">
+            <div className="flex justify-center ">
                 <Button onClick={handlePrevCourse} disabled={currentCourseIndex === 0}>
                     Prev Course
                 </Button>
