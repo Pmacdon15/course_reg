@@ -21,7 +21,7 @@ export type UserGradedClass = {
   classid: number
   courseid: number
   grade: number
-  term: string
+  termnumber: string
 }
 
 export type Class ={

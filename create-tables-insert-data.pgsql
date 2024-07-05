@@ -343,22 +343,22 @@ CREATE TABLE
     userEmail VARCHAR(255),
     classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
     grade INTEGER NOT NULL,
-    term INTEGER NOT NULL
+    termNumber INTEGER NOT NULL
   );
 
 INSERT INTO
-  CRUserGradedClasses (userEmail, classId, grade, term)
+  CRUserGradedClasses (userEmail, classId, grade, termNumber)
 VALUES
-  ('Your email here', 1, 93, 1),
-  ('Your email here', 2, 95, 1),
-  ('Your email here', 3, 89, 1),
-  ('Your email here', 4, 100, 1),
-  ('Your email here', 5, 93, 1),
-  ('Your email here', 6, 92, 2),
-  ('Your email here', 7, 91, 2),
-  ('Your email here', 8, 94, 2),
-  ('Your email here', 9, 100, 2),
-  ('Your email here', 10, 98, 2);
+  ('pmacdonald15@gmail.com', 1, 93, 1),
+  ('pmacdonald15@gmail.com', 2, 95, 1),
+  ('pmacdonald15@gmail.com', 3, 89, 1),
+  ('pmacdonald15@gmail.com', 4, 100, 1),
+  ('pmacdonald15@gmail.com', 5, 93, 1),
+  ('pmacdonald15@gmail.com', 6, 92, 2),
+  ('pmacdonald15@gmail.com', 7, 91, 2),
+  ('pmacdonald15@gmail.com', 8, 94, 2),
+  ('pmacdonald15@gmail.com', 9, 100, 2),
+  ('pmacdonald15@gmail.com', 10, 98, 2);
 
 -- MARK: CRUserRegisteredClasses
 CREATE TABLE
@@ -372,7 +372,6 @@ CREATE TABLE
 INSERT INTO
   CRUserRegisteredClasses (userEmail, classId)
 VALUES
-('pmacdonald15@gmail.com', 11);
   ('pmacdonald15@gmail.com', 1),
   ('pmacdonald15@gmail.com', 2),
   ('pmacdonald15@gmail.com', 3),
@@ -381,11 +380,11 @@ VALUES
   ('pmacdonald15@gmail.com', 6),
   ('pmacdonald15@gmail.com', 7),
   ('pmacdonald15@gmail.com', 8),
-  ('pmacdonald15@gmail.com', 9 ),
+  ('pmacdonald15@gmail.com', 9),
   ('pmacdonald15@gmail.com', 10),
   ('pmacdonald15@gmail.com', 11);
-  
--- drop table CRUserRegisteredClasses
--- select * from crusergradedclasses
--- select * from crclasses
--- select * from cruserregisteredclasses
+
+  -- drop table CRUserRegisteredClasses
+  -- select * from crusergradedclasses
+  -- select * from crclasses
+  -- select * from cruserregisteredclasses

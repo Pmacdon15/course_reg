@@ -66,7 +66,7 @@ export async function getUserGradedClasses(email: string) {
             classId,
             crclasses.courseid,
             grade,
-            term
+            termNumber
         FROM CRUserGradedClasses
         JOIN CRClasses ON CRUserGradedClasses.classId = CRClasses.id
         WHERE userEmail = ${email}
