@@ -38,12 +38,11 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
 }) {
     // Get the current course based on currentCourseIndex
     const currentCourse = userCourses[currentCourseIndex];
-
     // Filter classes for the current course
     const classesForCurrentCourse = availableClasses.filter((availableClass) => availableClass.courseid === currentCourse.id);
 
     // Filter classes that are available for the current term
-    const classesFilteredByTerm = availableClasses.filter((availableClass) => {
+    const classesFilteredByTerm = classesForCurrentCourse.filter((availableClass) => {
         if (currentTerm === 'Fall') {
             return availableClass.availablefall === true;
         } else if (currentTerm === 'Winter') {
@@ -136,8 +135,7 @@ export default function AvailableClasses(
     // Update url when term changes
     useEffect(() => {
         router.push(`/register/${createQueryString(currentTerm)}`);
-    }
-        , [currentTerm]);
+    }, [currentTerm]);
 
     const handleSwitchToFallTerm = () => {
         setCurrentTerm('Fall');
@@ -163,8 +161,6 @@ export default function AvailableClasses(
 
     const currentCourse = userCourses[currentCourseIndex];
     const classesWithoutPrerequisites = filterClasses({ userEmail, availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
-
-
 
 
     return (
