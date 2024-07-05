@@ -118,7 +118,7 @@ export default function AvailableClasses(
                             {
                                 classesWithoutPrerequisites.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
-                                        <ButtonClassInfo className={availableClass.classname} />                                            
+                                        <ButtonClassInfo className={availableClass.classname} term={"Fall"}/>                                            
                                     </li>
                                 ))}
                         </ul>
