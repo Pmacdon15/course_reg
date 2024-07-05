@@ -31,5 +31,9 @@ export type Class ={
   availableFall: boolean,
   availableWinter: boolean,
   availableSpring: boolean,
+  prerequisite1: string,
+  prerequisite2: string,
+  prerequisite3: string,
+  prerequisite4: string,
 }
 

@@ -2,7 +2,30 @@
 import { useState } from 'react';
 import { Class, UserGradedClass, UserCourse } from "@/app/types";
 import { Button } from '@mui/material';
-export default function AvailableClasses({ availableClasses = [], userGradedClasses, userCourses }: {  availableClasses: Class[], userGradedClasses: UserGradedClass[], userCourses: UserCourse[] }) {
+
+function buildClassMap(availableClasses: Class[]): Map<number, string[]> {
+    const classMap: Map<number, string[]> = new Map();
+    availableClasses.forEach((availableClass: Class) => {
+        const prerequisites: string[] = [];
+        if (availableClass.prerequisite1) {
+            prerequisites.push(availableClass.prerequisite1);
+        }
+        if (availableClass.prerequisite2) {
+            prerequisites.push(availableClass.prerequisite2);
+        }
+        if (availableClass.prerequisite3) {
+            prerequisites.push(availableClass.prerequisite3);
+        }
+        if (availableClass.prerequisite4) {
+            prerequisites.push(availableClass.prerequisite4);
+        }
+        classMap.set(availableClass.id, prerequisites);
+    });
+    return classMap;
+}
+
+export default function AvailableClasses({ availableClasses, userGradedClasses, userCourses }: {  availableClasses: Class[], userGradedClasses: UserGradedClass[], userCourses: UserCourse[] }) {
+    
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
     const handleNextCourse = () => {
@@ -21,13 +44,14 @@ export default function AvailableClasses({ availableClasses = [], userGradedClas
     
     const currentCourse = userCourses[currentCourseIndex];
     const classesForCurrentCourse = availableClasses.filter((availableClass: Class) => availableClass.courseid === currentCourse.id);
-    const ungradedClasses = classesForCurrentCourse.filter((availableClass: Class) => !userGradedClasses.some((gradedClass: UserGradedClass) => gradedClass.classid === availableClass.id));
-    // console.log(userGradedClasses);
-    // console.log(ungradedClasses);
-
-
+    const ungradedClasses = classesForCurrentCourse.filter((availableClass: Class) => !userGradedClasses.some((gradedClass: UserGradedClass) => gradedClass.classid === availableClass.id));    
+    const prerequisitesMap = buildClassMap(availableClasses); 
+    
+    
+    
+    
     return (
-        <div className="h-96 md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
+        <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
             <h1 className="text-2xl text-center font-bold mb-4">Available Classes for your programs</h1>
             
             {currentCourse && (
@@ -59,4 +83,5 @@ export default function AvailableClasses({ availableClasses = [], userGradedClas
             </div>
         </div>
     );
+    
 };

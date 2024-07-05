@@ -75,7 +75,11 @@ export async function getClassesForUserRegisteredCourses(email: string) {
             crClasses.className,
             crClasses.availableFall,
             crClasses.availableWinter,
-            crClasses.availableSpring
+            crClasses.availableSpring,
+            crClasses.prerequisite1,
+            crClasses.prerequisite2,
+            crClasses.prerequisite3,
+            crClasses.prerequisite4
         FROM crClasses 
         JOIN crUsersCourses ON CRClasses.courseId = crUsersCourses.courseID
         WHERE crUsersCourses.userEmail = ${email}
