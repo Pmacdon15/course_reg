@@ -28,9 +28,9 @@ export type Class ={
   id: number
   courseid: number
   classname: string
-  availableFall: boolean,
-  availableWinter: boolean,
-  availableSpring: boolean,
+  availablefall: boolean,
+  availablewinter: boolean,
+  availablespring: boolean,
   prerequisite1: number,
   prerequisite2: number,
   prerequisite3: number,

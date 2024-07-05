@@ -26,12 +26,13 @@ function buildClassMap(availableClasses: Class[]): Map<number, number[]> {
     });
     return classMap;
 }
-function filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex }: {
+function filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm }: {
     availableClasses: Class[],
     userGradedClasses: UserGradedClass[],
     userCourses: UserCourse[],
     userRegisteredClasses: UserRegisteredClass[],
-    currentCourseIndex: number
+    currentCourseIndex: number,
+    currentTerm: string
 }) {
     // Get the current course based on currentCourseIndex
     const currentCourse = userCourses[currentCourseIndex];
@@ -39,8 +40,20 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
     // Filter classes for the current course
     const classesForCurrentCourse = availableClasses.filter((availableClass) => availableClass.courseid === currentCourse.id);
 
+    // Filter classes that are available for the current term
+    const classesFilteredByTerm = availableClasses.filter((availableClass) => {
+        if (currentTerm === 'Fall') {
+            return availableClass.availablefall === true;          
+        } else if (currentTerm === 'Winter') {
+            return availableClass.availablewinter === true;
+        } else if (currentTerm === 'Spring') {
+            return availableClass.availablespring === true;
+        }    
+        return false; // Default to false if term doesn't match any condition
+    });
+
     // Filter classes that the user has not graded
-    const ungradedClasses = classesForCurrentCourse.filter((availableClass) => !userGradedClasses.some((gradedClass) => gradedClass.classid === availableClass.id));
+    const ungradedClasses = classesFilteredByTerm.filter((availableClass) => !userGradedClasses.some((gradedClass) => gradedClass.classid === availableClass.id));
 
     // Build a map of class id to prerequisites
     const prerequisitesMap = buildClassMap(availableClasses);
@@ -118,7 +131,8 @@ export default function AvailableClasses(
     });
 
     const currentCourse = userCourses[currentCourseIndex];
-    const classesWithoutPrerequisites = filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex });
+    // console.log(currentTerm)
+    const classesWithoutPrerequisites = filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
