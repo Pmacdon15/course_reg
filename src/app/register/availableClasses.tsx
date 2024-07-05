@@ -1,6 +1,6 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
-import { useRouter,useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Class, UserGradedClass, UserCourse, UserRegisteredClass } from "@/app/types";
 import { Button } from '@mui/material';
 import ButtonClassInfo from '@/app/register/buttonClassInfo';
@@ -36,58 +36,62 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
     currentCourseIndex: number,
     currentTerm: string
 }) {
-    // Get the current course based on currentCourseIndex
+    // Get the classes with prerequisites
+    const classesWithPrerequisitesMap = buildClassMap(availableClasses);
+
+    // Get Current Course
     const currentCourse = userCourses[currentCourseIndex];
-    // Filter classes for the current course
-    const classesForCurrentCourse = availableClasses.filter((availableClass) => availableClass.courseid === currentCourse.id);
 
-    // Filter classes that are available for the current term
-    const classesFilteredByTerm = classesForCurrentCourse.filter((availableClass) => {
-        if (currentTerm === 'Fall') {
-            return availableClass.availablefall === true;
-        } else if (currentTerm === 'Winter') {
-            return availableClass.availablewinter === true;
-        } else if (currentTerm === 'Spring') {
-            return availableClass.availablespring === true;
+    // Get the classes that are part of the current course
+    const currentCourseClasses = availableClasses.filter(availableClass => availableClass.courseid === currentCourse.id);  
+
+    // Loop over currentCourseClasses and remove classes that are not available in the current term
+    const classesAvailableForTerm = currentCourseClasses.filter(availableClass => {
+        if (availableClass.availablefall && currentTerm === 'Fall') {
+            return true;
         }
-        return false; // Default to false if term doesn't match any condition
+        if (availableClass.availablewinter && currentTerm === 'Winter') {
+            return true;
+        }
+        if (availableClass.availablespring && currentTerm === 'Spring') {
+            return true;
+        }
+        return false;
     });
 
-    // Filter classes that the user has not graded
-    const ungradedClasses = classesFilteredByTerm.filter((availableClass) => !userGradedClasses.some((gradedClass) => gradedClass.classid === availableClass.id));
+    // Extract the class IDs that are already graded
+    const gradedClassIds = userGradedClasses.map(gradedClass => gradedClass.classid);
 
-    // Build a map of class id to prerequisites
-    const prerequisitesMap = buildClassMap(availableClasses);
-
-    // Remove registered classes from prerequisitesMap
-    userRegisteredClasses.forEach((registeredClass) => {
-        const classId = registeredClass.classid;
-
-        if (prerequisitesMap.has(classId)) {
-            prerequisitesMap.delete(classId);
-        }
-
-        prerequisitesMap.forEach((value, key) => {
-            // Remove the classId from the prerequisites
-            if (value.includes(classId)) {
-                prerequisitesMap.set(key, value.filter((prerequisite) => prerequisite !== classId));
-            }
-            if (prerequisitesMap.get(key)?.length === 0) {
-                prerequisitesMap.delete(key);
-            }
-        });
-    });
-    // Remove graded classes from prerequisitesMap
-    prerequisitesMap.forEach((value, key) => {
-        if (value.some((prerequisite) => userGradedClasses.some((gradedClass) => gradedClass.classid === prerequisite))) {
-            prerequisitesMap.delete(key);
-        }
+    // Remove Graded classes from classesWithPrerequisitesMap
+    gradedClassIds.forEach(gradedClassId => {
+        classesWithPrerequisitesMap.delete(gradedClassId);
     });
 
-    // Filter out classes that have prerequisites that are ungraded and not registered for
-    const classesWithoutPrerequisites = ungradedClasses.filter((availableClass) => !prerequisitesMap.has(availableClass.id));
+    // Loop over classesWithPrerequisitesMap and remove classes that are already graded or registered from the map value, which is an array of prerequisites
+    classesWithPrerequisitesMap.forEach((prerequisites, classId) => {
+        const gradedClasses = userGradedClasses.map(gradedClass => gradedClass.classid);
+        const registeredClasses = userRegisteredClasses.map(registeredClass => registeredClass.classid);
 
-    return classesWithoutPrerequisites;
+        const updatedPrerequisites = prerequisites.filter(prerequisite =>
+            !gradedClasses.includes(prerequisite) && !registeredClasses.includes(prerequisite)
+        );
+
+        // Update the map with filtered prerequisites
+        if (updatedPrerequisites.length === 0) {
+            classesWithPrerequisitesMap.delete(classId);
+        } else {
+            classesWithPrerequisitesMap.set(classId, updatedPrerequisites);
+        }
+    });   
+    // Loop over classesAvailableForTerm and remove classes that are already graded
+    const classesWithoutGrades = classesAvailableForTerm.filter(availableClass => {
+        return !gradedClassIds.includes(availableClass.id);
+    });
+    //Loop over classesAvailableForTerm and remove classes that have prerequisites as a key in classesWithPrerequisitesMap
+    const classesWithoutPrerequisites = classesWithoutGrades.filter(availableClass => {
+        return !classesWithPrerequisitesMap.has(availableClass.id);
+    });
+    return classesWithoutPrerequisites;    
 }
 
 //MARK: Start of page
@@ -129,8 +133,8 @@ export default function AvailableClasses(
         const newTerm = searchParams.get('term');
         if (newTerm) {
             setCurrentTerm(newTerm);
-        }       
-    }, [router]);   
+        }
+    }, [router]);
 
     // Update url when term changes
     useEffect(() => {
