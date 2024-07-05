@@ -12,14 +12,14 @@ export default async function Page() {
   const courses = await getAllCourses();
   const userCourses = await getUserCourses(user.user?.email);
   const userGradedClasses = await getUserGradedClasses(user.user?.email);
-  const classes = await getClassesForUserRegisteredCourses(user.user?.email);
-  console.log(classes);
+  const availableClasses = await getClassesForUserRegisteredCourses(user.user?.email);
+ 
 
   return (
-    <div className="flex lg:my-8 justify-center gap-8 ">
+    <div className="flex flex-wrap md:my-8 justify-center gap-8 ">
       {/* <RegisterUser /> */}
       <AllCourses courses={courses} />
-      <AvailableClasses classes={classes}/>
+      <AvailableClasses availableClasses={availableClasses} userGradedClasses={userGradedClasses} userCourses={userCourses}/>
     </div>
   );
 };

@@ -72,6 +72,7 @@ export async function getClassesForUserRegisteredCourses(email: string) {
         SELECT
             crClasses.id,
             crClasses.courseId,
+            crClasses.className,
             crClasses.availableFall,
             crClasses.availableWinter,
             crClasses.availableSpring

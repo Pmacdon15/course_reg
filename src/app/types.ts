@@ -18,7 +18,7 @@ export type UserCourse = {
 
 export type UserGradedClass = {
   id: number
-  classId: number
+  classid: number
   courseid: number
   grade: number
   term: string
@@ -26,10 +26,8 @@ export type UserGradedClass = {
 
 export type Class ={
   id: number
-  courseId: number
-  name: string
-  description: string
-  term: string
+  courseid: number
+  classname: string
   availableFall: boolean,
   availableWinter: boolean,
   availableSpring: boolean,
