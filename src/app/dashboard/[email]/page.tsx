@@ -8,7 +8,7 @@ import { getAllCourses, getUserCourses, getUserGradedClasses } from '@/app/dashb
 export default async function Page() {
   // Ensure the user is signed in and get User Object
   const user = await getUser({ ensureSignedIn: true });
-  // Get all courses and user courses
+  // Get all courses and user courses and graded classes
   const courses = await getAllCourses();
   const userCourses = await getUserCourses(user.user?.email);
   const userGradedClasses = await getUserGradedClasses(user.user?.email);

@@ -5,7 +5,7 @@ export default async function Page() {
     const user = await getUser({ ensureSignedIn: true });
     //const email = user?.user?.email;
     if (user) {
-        redirect(`/dashboard/${user.user.email}`);
+        redirect(`/register/${user.user.email}`);
     }
     return (
         <>
