@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import {useRouter} from 'next/navigation';
 import { Class, UserGradedClass, UserCourse, UserRegisteredClass } from "@/app/types";
 import { Button } from '@mui/material';
 import ButtonClassInfo from '@/app/register/buttonClassInfo';
@@ -27,6 +28,7 @@ function buildClassMap(availableClasses: Class[]): Map<number, number[]> {
     return classMap;
 }
 function filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm }: {
+    userEmail:string,
     availableClasses: Class[],
     userGradedClasses: UserGradedClass[],
     userCourses: UserCourse[],
@@ -89,16 +91,18 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
     return classesWithoutPrerequisites;
 }
 
-
+//MARK: Start of page
 export default function AvailableClasses(
-    { availableClasses, userGradedClasses, userCourses, userRegisteredClasses }:
+    { userEmail, availableClasses, userGradedClasses, userCourses, userRegisteredClasses }:
         {
+            userEmail:string,
             availableClasses: Class[],
             userGradedClasses: UserGradedClass[],
             userCourses: UserCourse[],
             userRegisteredClasses: UserRegisteredClass[]
         }
 ) {
+    const router = useRouter();
     // Handle switching between courses
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
@@ -110,18 +114,36 @@ export default function AvailableClasses(
         setCurrentCourseIndex((prevIndex) => prevIndex - 1);
     };
     // Handle switching between terms
-    const [currentTerm, setCurrentTerm] = useState('Fall');
+    
+    const [currentTerm, setCurrentTerm] = useState('Fall');  
+    
+    const createQueryString = useCallback(
+        (currentTerm: string)
+            : string => {
+            return `${userEmail}/?term=${currentTerm}`;
+        },
+        [currentTerm]
+    );
+
+   useEffect(() => {
+        router.push(`/register/${createQueryString(currentTerm)}`);
+    }
+    ,[currentTerm]);
 
     const handleSwitchToFallTerm = () => {
         setCurrentTerm('Fall');
+        router.push(`/register/${createQueryString('Fall')}`);
+
     };
 
     const handleSwitchToWinterTerm = () => {
         setCurrentTerm('Winter');
+        router.push(`/register/${createQueryString('Winter')}`);
     };
 
     const handleSwitchToSpringTerm = () => {
         setCurrentTerm('Spring');
+        router.push(`/register/${createQueryString('Spring')}`);
     };
 
     userCourses.sort((a, b) => {
@@ -131,8 +153,10 @@ export default function AvailableClasses(
     });
 
     const currentCourse = userCourses[currentCourseIndex];
-    // console.log(currentTerm)
-    const classesWithoutPrerequisites = filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
+    const classesWithoutPrerequisites = filterClasses({userEmail, availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
+    
+   
+
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">

@@ -17,7 +17,7 @@ export default async function Page() {
   return (
     <div className="flex flex-wrap md:my-8 justify-center gap-8 ">
       <AllCourses courses={courses} />
-      <AvailableClasses availableClasses={availableClasses} userGradedClasses={userGradedClasses} userCourses={userCourses} userRegisteredClasses={registeredClasses}/>
+      <AvailableClasses userEmail={user.user?.email}availableClasses={availableClasses} userGradedClasses={userGradedClasses} userCourses={userCourses} userRegisteredClasses={registeredClasses}/>
     </div>
   );
 };
