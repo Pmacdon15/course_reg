@@ -1,5 +1,18 @@
 import { sql } from "@vercel/postgres";
-import { Course, UserCourse, UserGradedClass, Class , UserRegisteredClass} from '@/app/types';
+import { Course, UserCourse, UserGradedClass, Class, UserRegisteredClass } from '@/app/types';
+import { getUser } from '@workos-inc/authkit-nextjs'
+
+async function auth(email: string) {
+    'use server';
+    try {
+        const user = await getUser({ ensureSignedIn: true });
+        if (user.user?.email != email) throw new Error('Unauthorized user');
+    } catch (error) {
+        console.error((error as Error).message);  
+        return false;      
+    }
+    return true;
+}
 
 export async function getAllCourses() {
     'use server';
@@ -16,6 +29,7 @@ export async function getAllCourses() {
 }
 export async function getUserCourses(email: string) {
     'use server'
+    if (!await auth(email)) return [];
     try {
         const results = await sql`
        SELECT 
@@ -44,6 +58,7 @@ export async function getUserCourses(email: string) {
 
 export async function getUserGradedClasses(email: string) {
     'use server'
+    if (!await auth(email)) return [];
     try {
         const results = await sql`
         SELECT
@@ -68,6 +83,7 @@ export async function getUserGradedClasses(email: string) {
 
 export async function getClassesForUserRegisteredCourses(email: string) {
     'use server'
+    if (!await auth(email)) return [];
     try {
         const results = await sql`
         SELECT
@@ -97,6 +113,7 @@ export async function getClassesForUserRegisteredCourses(email: string) {
 
 export async function getRegisteredClasses(email: string) {
     'use server'
+    if (!await auth(email)) return [];
     try {
         const results = await sql`
             SELECT

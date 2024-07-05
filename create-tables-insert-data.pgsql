@@ -9,7 +9,7 @@ CREATE TABLE
     credential VARCHAR(255) NOT NULL,
     school VARCHAR(255) NOT NULL
   );
-  
+
 INSERT INTO
   CRAvailableCourses (
     name,
@@ -57,7 +57,7 @@ CREATE TABLE
     registered BOOLEAN DEFAULT FALSE,
     UNIQUE (userEmail, courseID)
   );
-  
+
 INSERT INTO
   crUsersCourses (userEmail, courseID, registered)
 VALUES
@@ -80,6 +80,7 @@ CREATE TABLE
     prerequisite3 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
     prerequisite4 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL
   );
+
 INSERT INTO
   CRClasses (
     classCode,
@@ -364,12 +365,14 @@ CREATE TABLE
   CRUserRegisteredClasses (
     id SERIAL PRIMARY KEY,
     userEmail VARCHAR(255),
-    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE
+    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
+    graded BOOLEAN DEFAULT FALSE
   );
 
 INSERT INTO
   CRUserRegisteredClasses (userEmail, classId)
 VALUES
+('pmacdonald15@gmail.com', 11);
   ('pmacdonald15@gmail.com', 1),
   ('pmacdonald15@gmail.com', 2),
   ('pmacdonald15@gmail.com', 3),
@@ -378,8 +381,11 @@ VALUES
   ('pmacdonald15@gmail.com', 6),
   ('pmacdonald15@gmail.com', 7),
   ('pmacdonald15@gmail.com', 8),
-  ('pmacdonald15@gmail.com', 9),
-  ('pmacdonald15@gmail.com', 10);
-
-
-  select * From CRClasses;
+  ('pmacdonald15@gmail.com', 9 ),
+  ('pmacdonald15@gmail.com', 10),
+  ('pmacdonald15@gmail.com', 11);
+  
+-- drop table CRUserRegisteredClasses
+-- select * from crusergradedclasses
+-- select * from crclasses
+-- select * from cruserregisteredclasses

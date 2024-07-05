@@ -54,6 +54,7 @@ function filterClasses({availableClasses, userGradedClasses, userRegisteredClass
         }
 
         prerequisitesMap.forEach((value, key) => {
+            // Remove the classId from the prerequisites
             if (value.includes(classId)) {
                 prerequisitesMap.set(key, value.filter((prerequisite) => prerequisite !== classId));
             }
@@ -61,6 +62,12 @@ function filterClasses({availableClasses, userGradedClasses, userRegisteredClass
                 prerequisitesMap.delete(key);
             }
         });
+    });
+    // Remove graded classes from prerequisitesMap
+    prerequisitesMap.forEach((value, key) => {
+        if (value.some((prerequisite) => userGradedClasses.some((gradedClass) => gradedClass.classid === prerequisite))) {
+            prerequisitesMap.delete(key);
+        }
     });
 
     // Filter out classes that have prerequisites that are ungraded and not registered for
@@ -108,7 +115,7 @@ export default function AvailableClasses(
                     <h2>Available Classes:</h2>
                     {currentCourse && (
                         <ul>
-                            {//Todo  replace classesWithoutPrerequisites with ungradedNotRegisteredClasses after applying filtering
+                            {
                                 classesWithoutPrerequisites.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
                                         <ButtonClassInfo className={availableClass.classname} />                                            
