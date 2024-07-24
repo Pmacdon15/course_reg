@@ -14,6 +14,7 @@ async function auth(email: string) {
     return true;
 }
 
+//MARK: Get all courses
 export async function getAllCourses() {
     'use server';
     try {
@@ -28,17 +29,40 @@ export async function getAllCourses() {
     }
 }
 //MARK: Get courses available for user, based on user email
-// To return courses available for user, we need to check if the user is authenticated
-// and then return the courses available for the user courses have upto 4 prerequisites,
-// so if the user has the prerequisites graded or is registered for the class, the class is available
-// Also removing the classes the user has graded from the list
 export async function getClassesAvailableForUser(email: string) {
     'use server'
     if (!await auth(email)) return [];
     try {
         const results = await sql`
-        SELECT
-        
+        SELECT 
+            crClasses.id,
+            crClasses.courseId,
+            crClasses.className,
+            crClasses.availableFall,
+            crClasses.availableWinter,
+            crClasses.availableSpring
+        FROM 
+            crClasses
+        WHERE 
+            crClasses.prerequisite1 IS NULL
+            AND crClasses.prerequisite2 IS NULL
+            AND crClasses.prerequisite3 IS NULL
+            AND crClasses.prerequisite4 IS NULL
+            AND crClasses.id NOT IN (
+                SELECT classId
+                FROM CRUserClasses
+            )
+            OR 
+            (
+                -- Class has prerequisites, but user has already taken or registered for them
+                (crClasses.prerequisite1 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite1 IS NULL)
+                AND (crClasses.prerequisite2 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite2 IS NULL)
+                AND (crClasses.prerequisite3 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite3 IS NULL)
+                AND (crClasses.prerequisite4 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite4 IS NULL)
+            )
+            AND 
+            -- Class is not already taken or registered by user
+            crClasses.id NOT IN (SELECT classId FROM CRUserClasses)
         `;
 
         if (results.rows.length < 1) {
@@ -88,14 +112,14 @@ export async function getUserGradedClasses(email: string) {
     try {
         const results = await sql`
         SELECT
-            CRUserGradedClasses.id,
+            CRUserClasses.id,
             classId,
             crclasses.courseid,
             grade,
             termNumber
-        FROM CRUserGradedClasses
-        JOIN CRClasses ON CRUserGradedClasses.classId = CRClasses.id
-        WHERE userEmail = ${email}
+        FROM CRUserClasses
+        JOIN CRClasses ON CRUserClasses.classId = CRClasses.id
+        WHERE userEmail = ${email} AND grade IS NOT NULL
         `;
         if (results.rows.length < 1) {
             throw new Error('No graded classes found');
@@ -136,26 +160,26 @@ export async function getClassesForUserRegisteredCourses(email: string) {
         return [];
     }
 }
-
-export async function getRegisteredClasses(email: string) {
-    'use server'
-    if (!await auth(email)) return [];
-    try {
-        const results = await sql`
-            SELECT
-                classid
-            FROM CRUserRegisteredClasses 
-            WHERE userEmail = ${email}
-        `;
-        if (results.rows.length < 1) {
-            throw new Error('No classes found');
-        }
-        return results.rows as UserRegisteredClass[];
-    } catch (error) {
-        console.error((error as Error).message);
-        return [];
-    }
-}
+//Todo: remove this
+// export async function getRegisteredClasses(email: string) {
+//     'use server'
+//     if (!await auth(email)) return [];
+//     try {
+//         const results = await sql`
+//             SELECT
+//                 classid
+//             FROM CRUserClasses 
+//             WHERE userEmail = ${email} AND grade IS NULL
+//         `;
+//         if (results.rows.length < 1) {
+//             throw new Error('No classes found');
+//         }
+//         return results.rows as UserRegisteredClass[];
+//     } catch (error) {
+//         console.error((error as Error).message);
+//         return [];
+//     }
+// }
 
 // MARK: Can user register for a class
 // export async function canUserRegisterForClass(email: string, className: string) {

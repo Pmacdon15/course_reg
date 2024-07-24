@@ -39,15 +39,29 @@ CREATE TABLE
   );
 
 -- MARK: CRUserGradedClasses
+-- Todo remove
 CREATE TABLE
   CRUserGradedClasses (
     id SERIAL PRIMARY KEY,
     userEmail VARCHAR(255),
     classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
-    grade INTEGER NOT NULL,
+    grade INTEGER,
     termNumber INTEGER NOT NULL
   );
 
+-- MARK: CRUserGradedClasses
+-- This is the ne table that will replace CRUserClasses
+CREATE TABLE
+  CRUserClasses (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
+    grade INTEGER,
+    termNumber INTEGER NOT NULL,
+    termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
+  );
+
+-- TODO remove this table
 -- MARK: CRUserRegisteredClasses
 CREATE TABLE
   CRUserRegisteredClasses (
@@ -58,6 +72,7 @@ CREATE TABLE
     termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
   );
 
+-- MARK: Insert Data into CraAvailableCourses
 INSERT INTO
   CRAvailableCourses (
     name,
@@ -96,12 +111,14 @@ VALUES
     'School of Technology'
   );
 
+-- MARK: Insert Data into crUsersCourses
 INSERT INTO
   crUsersCourses (userEmail, courseID, registered)
 VALUES
   ('Your email here', 1, TRUE),
   ('Your email here', 2, FALSE);
 
+-- MARK: Insert Data into CRClasses
 INSERT INTO
   CRClasses (
     classCode,
@@ -357,6 +374,8 @@ VALUES
     NULL
   );
 
+-- MARK: Insert Data into CRUserGradedClasses
+-- Todo remove
 INSERT INTO
   CRUserGradedClasses (userEmail, classId, grade, termNumber)
 VALUES
@@ -371,12 +390,31 @@ VALUES
   ('pmacdonald15@gmail.com', 9, 100, 2),
   ('pmacdonald15@gmail.com', 10, 98, 2);
 
+-- MARK: Insert Data into CRUserRegisteredClasses
+-- Todo remove
 INSERT INTO
   CRUserRegisteredClasses (userEmail, classId, termNumber, termSeason)
 VALUES
   ('pmacdonald15@gmail.com', 11, 3, 'Fall');
 
+-- Mark: Insert Data into CRUserClasses
+INSERT INTO
+  CRUserClasses (userEmail, classId, grade, termNumber, termSeason)
+VALUES
+  ('pmacdonald15@gmail.com', 1, 93, 1, 'Fall'),
+  ('pmacdonald15@gmail.com', 2, 95, 1, 'Fall'),
+  ('pmacdonald15@gmail.com', 3, 89, 1, 'Fall'),
+  ('pmacdonald15@gmail.com', 4, 100, 1, 'Fall'),
+  ('pmacdonald15@gmail.com', 5, 93, 1, 'Fall'),
+  ('pmacdonald15@gmail.com', 6, 92, 2, 'Winter'),
+  ('pmacdonald15@gmail.com', 7, 91, 2, 'Winter'),
+  ('pmacdonald15@gmail.com', 8, 94, 2, 'Winter'),
+  ('pmacdonald15@gmail.com', 9, 100, 2, 'Winter'),
+  ('pmacdonald15@gmail.com', 10, 98, 2, 'Winter'),
+  ('pmacdonald15@gmail.com', 11, NULL, 3, 'Fall');
+
 -- drop table CRUserRegisteredClasses
 -- select * from crusergradedclasses
 -- select * from crclasses
+-- select * from crUserclasses
 -- select * from cruserregisteredclasses

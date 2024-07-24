@@ -1,49 +1,22 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Class, UserGradedClass, UserCourse, UserRegisteredClass } from "@/app/types";
+import { Class, UserCourse } from "@/app/types";
 import { Button } from '@mui/material';
 import ButtonClassInfo from '@/app/register/buttonClassInfo';
 
-function buildClassMap(availableClasses: Class[]): Map<number, number[]> {
-    const classMap: Map<number, number[]> = new Map();
-    availableClasses.forEach((availableClass: Class) => {
-        const prerequisites: number[] = [];
-        if (availableClass.prerequisite1) {
-            prerequisites.push(availableClass.prerequisite1);
-        }
-        if (availableClass.prerequisite2) {
-            prerequisites.push(availableClass.prerequisite2);
-        }
-        if (availableClass.prerequisite3) {
-            prerequisites.push(availableClass.prerequisite3);
-        }
-        if (availableClass.prerequisite4) {
-            prerequisites.push(availableClass.prerequisite4);
-        }
-        if (prerequisites.length > 0) {
-            classMap.set(availableClass.id, prerequisites);
-        }
-    });
-    return classMap;
-}
-function filterClasses({ availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm }: {
-    userEmail: string,
-    availableClasses: Class[],
-    userGradedClasses: UserGradedClass[],
-    userCourses: UserCourse[],
-    userRegisteredClasses: UserRegisteredClass[],
-    currentCourseIndex: number,
-    currentTerm: string
-}) {
-    // Get the classes with prerequisites
-    const classesWithPrerequisitesMap = buildClassMap(availableClasses);
-
+function newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm }:
+    {
+        availableClasses: Class[],
+        userCourses: UserCourse[],
+        currentCourseIndex: number,
+        currentTerm: string
+    }) {
     // Get Current Course
     const currentCourse = userCourses[currentCourseIndex];
 
     // Get the classes that are part of the current course
-    const currentCourseClasses = availableClasses.filter(availableClass => availableClass.courseid === currentCourse.id);  
+    const currentCourseClasses = availableClasses.filter(availableClass => availableClass.courseid === currentCourse.id);
 
     // Loop over currentCourseClasses and remove classes that are not available in the current term
     const classesAvailableForTerm = currentCourseClasses.filter(availableClass => {
@@ -58,51 +31,16 @@ function filterClasses({ availableClasses, userGradedClasses, userRegisteredClas
         }
         return false;
     });
-
-    // Extract the class IDs that are already graded
-    const gradedClassIds = userGradedClasses.map(gradedClass => gradedClass.classid);
-
-    // Remove Graded classes from classesWithPrerequisitesMap
-    gradedClassIds.forEach(gradedClassId => {
-        classesWithPrerequisitesMap.delete(gradedClassId);
-    });
-
-    // Loop over classesWithPrerequisitesMap and remove classes that are already graded or registered from the map value, which is an array of prerequisites
-    classesWithPrerequisitesMap.forEach((prerequisites, classId) => {
-        const gradedClasses = userGradedClasses.map(gradedClass => gradedClass.classid);
-        const registeredClasses = userRegisteredClasses.map(registeredClass => registeredClass.classid);
-
-        const updatedPrerequisites = prerequisites.filter(prerequisite =>
-            !gradedClasses.includes(prerequisite) && !registeredClasses.includes(prerequisite)
-        );
-
-        // Update the map with filtered prerequisites
-        if (updatedPrerequisites.length === 0) {
-            classesWithPrerequisitesMap.delete(classId);
-        } else {
-            classesWithPrerequisitesMap.set(classId, updatedPrerequisites);
-        }
-    });   
-    // Loop over classesAvailableForTerm and remove classes that are already graded
-    const classesWithoutGrades = classesAvailableForTerm.filter(availableClass => {
-        return !gradedClassIds.includes(availableClass.id);
-    });
-    //Loop over classesAvailableForTerm and remove classes that have prerequisites as a key in classesWithPrerequisitesMap
-    const classesWithoutPrerequisites = classesWithoutGrades.filter(availableClass => {
-        return !classesWithPrerequisitesMap.has(availableClass.id);
-    });
-    return classesWithoutPrerequisites;    
+    return classesAvailableForTerm;
 }
 
 //MARK: Start of page
 export default function AvailableClasses(
-    { userEmail, availableClasses, userGradedClasses, userCourses, userRegisteredClasses }:
+    { userEmail, availableClasses, userCourses }:
         {
             userEmail: string,
             availableClasses: Class[],
-            userGradedClasses: UserGradedClass[],
             userCourses: UserCourse[],
-            userRegisteredClasses: UserRegisteredClass[]
         }
 ) {
     const router = useRouter();
@@ -164,8 +102,10 @@ export default function AvailableClasses(
     });
 
     const currentCourse = userCourses[currentCourseIndex];
-    const classesWithoutPrerequisites = filterClasses({ userEmail, availableClasses, userGradedClasses, userRegisteredClasses, userCourses, currentCourseIndex, currentTerm });
 
+    console.log("newFiLterClasses");
+    const classesAvailableForTerm = newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm });
+    console.table(classesAvailableForTerm);
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
@@ -188,9 +128,9 @@ export default function AvailableClasses(
                     {currentCourse && (
                         <ul>
                             {
-                                classesWithoutPrerequisites.map((availableClass: Class) => (
+                                classesAvailableForTerm.map((availableClass: Class) => (
                                     <li key={availableClass.id} className="mb-4">
-                                        <ButtonClassInfo userEmail={userEmail}className={availableClass.classname}classId={availableClass.id} term={currentTerm} />
+                                        <ButtonClassInfo userEmail={userEmail} className={availableClass.classname} classId={availableClass.id} term={currentTerm} />
                                     </li>
                                 ))}
                         </ul>
