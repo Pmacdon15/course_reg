@@ -8,8 +8,8 @@ async function auth(email: string) {
         const user = await getUser({ ensureSignedIn: true });
         if (user.user?.email != email) throw new Error('Unauthorized user');
     } catch (error) {
-        console.error((error as Error).message);  
-        return false;      
+        console.error((error as Error).message);
+        return false;
     }
     return true;
 }
@@ -27,6 +27,32 @@ export async function getAllCourses() {
         return [];
     }
 }
+//MARK: Get courses available for user, based on user email
+// To return courses available for user, we need to check if the user is authenticated
+// and then return the courses available for the user courses have upto 4 prerequisites,
+// so if the user has the prerequisites graded or is registered for the class, the class is available
+// Also removing the classes the user has graded from the list
+export async function getClassesAvailableForUser(email: string) {
+    'use server'
+    if (!await auth(email)) return [];
+    try {
+        const results = await sql`
+        SELECT
+        
+        `;
+
+        if (results.rows.length < 1) {
+            throw new Error('No classes found');
+        }
+        return results.rows as Class[];
+    } catch (error) {
+        console.error((error as Error).message);
+        return [];
+    }
+}
+
+
+
 export async function getUserCourses(email: string) {
     'use server'
     if (!await auth(email)) return [];
@@ -128,5 +154,46 @@ export async function getRegisteredClasses(email: string) {
     } catch (error) {
         console.error((error as Error).message);
         return [];
+    }
+}
+
+// MARK: Can user register for a class
+// export async function canUserRegisterForClass(email: string, className: string) {
+//     'use server'
+//     if (!await auth(email)) return false;
+//     try {
+//         const results = await sql`
+//             SELECT
+//                 crClasses.id
+//             FROM crClasses
+//             JOIN crUsersCourses ON crClasses.courseId = crUsersCourses.courseID
+//             WHERE crUsersCourses.userEmail = ${email} AND crClasses.className = ${className}
+//         `;
+//         if (results.rows.length < 1) {
+//             throw new Error('No classes found');
+//         }
+//         return true;
+//     } catch (error) {
+//         console.error((error as Error).message);
+//         return false;
+//     }
+// }
+//MARK: Get class by id
+export async function getClassById(classId: number) {
+    'use server'
+    try {
+        const results = await sql`
+        SELECT
+            *
+        FROM crClasses
+        WHERE id = ${classId}
+        `;
+        if (results.rows.length < 1) {
+            throw new Error('No classes found');
+        }
+        return results.rows[0] as Class;
+    } catch (error) {
+        console.error((error as Error).message);
+        return {} as Class;
     }
 }

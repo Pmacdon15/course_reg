@@ -10,6 +10,54 @@ CREATE TABLE
     school VARCHAR(255) NOT NULL
   );
 
+-- MARK: crUsersCourses
+-- If a user is not registered for a course, it is completed.
+CREATE TABLE
+  crUsersCourses (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    courseID INTEGER REFERENCES CRAvailableCourses (id) ON DELETE CASCADE,
+    registered BOOLEAN DEFAULT FALSE,
+    UNIQUE (userEmail, courseID)
+  );
+
+-- MARK: CRClasses
+CREATE TABLE
+  CRClasses (
+    id SERIAL PRIMARY KEY,
+    classCode VARCHAR(255) UNIQUE NOT NULL,
+    className VARCHAR(255) NOT NULL,
+    courseId INTEGER,
+    CONSTRAINT fk_courseId FOREIGN KEY (courseId) REFERENCES CRAvailableCourses (id),
+    availableDurringFall BOOLEAN,
+    availableDurringWinter BOOLEAN,
+    availableDurringSpring BOOLEAN,
+    prerequisite1 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
+    prerequisite2 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
+    prerequisite3 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
+    prerequisite4 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL
+  );
+
+-- MARK: CRUserGradedClasses
+CREATE TABLE
+  CRUserGradedClasses (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
+    grade INTEGER NOT NULL,
+    termNumber INTEGER NOT NULL
+  );
+
+-- MARK: CRUserRegisteredClasses
+CREATE TABLE
+  CRUserRegisteredClasses (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
+    termNumber INTEGER NOT NULL,
+    termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
+  );
+
 INSERT INTO
   CRAvailableCourses (
     name,
@@ -48,38 +96,11 @@ VALUES
     'School of Technology'
   );
 
--- MARK: crUsersCourses
-CREATE TABLE
-  crUsersCourses (
-    id SERIAL PRIMARY KEY,
-    userEmail VARCHAR(255),
-    courseID INTEGER REFERENCES CRAvailableCourses (id) ON DELETE CASCADE,
-    registered BOOLEAN DEFAULT FALSE,
-    UNIQUE (userEmail, courseID)
-  );
-
 INSERT INTO
   crUsersCourses (userEmail, courseID, registered)
 VALUES
   ('Your email here', 1, TRUE),
   ('Your email here', 2, FALSE);
-
--- MARK: CRClasses
-CREATE TABLE
-  CRClasses (
-    id SERIAL PRIMARY KEY,
-    classCode VARCHAR(255) UNIQUE NOT NULL,
-    className VARCHAR(255) NOT NULL,
-    courseId INTEGER,
-    CONSTRAINT fk_courseId FOREIGN KEY (courseId) REFERENCES CRAvailableCourses (id),
-    availableDurringFall BOOLEAN,
-    availableDurringWinter BOOLEAN,
-    availableDurringSpring BOOLEAN,
-    prerequisite1 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
-    prerequisite2 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
-    prerequisite3 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
-    prerequisite4 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL
-  );
 
 INSERT INTO
   CRClasses (
@@ -336,16 +357,6 @@ VALUES
     NULL
   );
 
--- MARK: CRUserGradedClasses
-CREATE TABLE
-  CRUserGradedClasses (
-    id SERIAL PRIMARY KEY,
-    userEmail VARCHAR(255),
-    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
-    grade INTEGER NOT NULL,
-    termNumber INTEGER NOT NULL
-  );
-
 INSERT INTO
   CRUserGradedClasses (userEmail, classId, grade, termNumber)
 VALUES
@@ -360,21 +371,10 @@ VALUES
   ('pmacdonald15@gmail.com', 9, 100, 2),
   ('pmacdonald15@gmail.com', 10, 98, 2);
 
--- MARK: CRUserRegisteredClasses
-CREATE TABLE
-  CRUserRegisteredClasses (
-    id SERIAL PRIMARY KEY,
-    userEmail VARCHAR(255),
-    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
-    termNumber INTEGER NOT NULL,
-    termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
-  );
-
 INSERT INTO
   CRUserRegisteredClasses (userEmail, classId, termNumber, termSeason)
 VALUES
   ('pmacdonald15@gmail.com', 11, 3, 'Fall');
-  
 
 -- drop table CRUserRegisteredClasses
 -- select * from crusergradedclasses
