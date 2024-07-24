@@ -1,7 +1,7 @@
-import AvailableClasses from '@/app/register/availableClasses';
-import AllCourses from '@/app/dashboard/allCourses';
+import AvailableClasses from '@/components/availableClasses';
+import AllCourses from '@/components/allCourses';
 import { getUser } from '@workos-inc/authkit-nextjs'
-import { getAllCourses,getClassesAvailableForUser, getUserCourses} from '@/app/actions';
+import { getAllCourses,getClassesAvailableForUser, getUserCourses} from '@/actions/actions';
 
 export default async function Page() {
   // Ensure the user is signed in and get User Object

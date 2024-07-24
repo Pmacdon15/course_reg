@@ -1,6 +1,6 @@
 'use client';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
-import { UserCourse, UserGradedClass } from '@/app/types';
+import { UserCourse, UserGradedClass } from '@/types/types';
 import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 

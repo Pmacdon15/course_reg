@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import AppBar from '@/app/components/appBar/appBar';
-import LogInLogOuButtons from "@/app/components/appBar/loginLogoutButtons";
+import AppBar from '@/components/appBar/appBar';
+import LogInLogOuButtons from "@/components/appBar/loginLogoutButtons";
 import { getUser } from '@workos-inc/authkit-nextjs'
 
 const inter = Inter({ subsets: ["latin"] });

@@ -1,4 +1,4 @@
-import { UserCourse } from "@/app/types";
+import { UserCourse } from "@/types/types";
 
 export default async function UserCourses({ usersCourses }: { usersCourses: UserCourse[] }) {    
     return (

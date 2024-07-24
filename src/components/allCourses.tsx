@@ -1,5 +1,5 @@
-import ButtonCourseInfo from "@/app/dashboard/buttonCourseInfo";
-import { Course } from "@/app/types";
+import ButtonCourseInfo from "@/components/buttonCourseInfo";
+import { Course } from "@/types/types";
 
 export default async function AllCourses({courses}:{courses: Course[]}) {
     return (

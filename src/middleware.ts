@@ -1,6 +1,6 @@
 // This file is only used in conjunction with the authkit-nextjs library
 import { authkitMiddleware } from '@workos-inc/authkit-nextjs';
-import LogInLogOuButtons from '@/app/components/appBar/loginLogoutButtons';
+import LogInLogOuButtons from '@/components/appBar/loginLogoutButtons';
 
 export default authkitMiddleware({ debug: true });
 
