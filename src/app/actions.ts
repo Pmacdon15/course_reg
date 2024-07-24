@@ -28,17 +28,41 @@ export async function getAllCourses() {
     }
 }
 //MARK: Get courses available for user, based on user email
-// To return courses available for user, we need to check if the user is authenticated
-// and then return the courses available for the user courses have upto 4 prerequisites,
-// so if the user has the prerequisites graded or is registered for the class, the class is available
-// Also removing the classes the user has graded from the list
+
 export async function getClassesAvailableForUser(email: string) {
     'use server'
     if (!await auth(email)) return [];
     try {
         const results = await sql`
-        SELECT
-        
+    SELECT 
+        crClasses.id,
+        crClasses.courseId,
+        crClasses.className,
+        crClasses.availableFall,
+        crClasses.availableWinter,
+        crClasses.availableSpring
+    FROM 
+        crClasses
+    WHERE 
+        crClasses.prerequisite1 IS NULL
+        AND crClasses.prerequisite2 IS NULL
+        AND crClasses.prerequisite3 IS NULL
+        AND crClasses.prerequisite4 IS NULL
+        AND crClasses.id NOT IN (
+            SELECT classId
+            FROM CRUserClasses
+        )
+        OR 
+        (
+            -- Class has prerequisites, but user has already taken or registered for them
+            (crClasses.prerequisite1 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite1 IS NULL)
+            AND (crClasses.prerequisite2 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite2 IS NULL)
+            AND (crClasses.prerequisite3 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite3 IS NULL)
+            AND (crClasses.prerequisite4 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite4 IS NULL)
+        )
+        AND 
+        -- Class is not already taken or registered by user
+        crClasses.id NOT IN (SELECT classId FROM CRUserClasses)
         `;
 
         if (results.rows.length < 1) {
@@ -81,7 +105,7 @@ export async function getUserCourses(email: string) {
         return [];
     }
 }
-
+// Todo: Use Table CRUserClasses
 export async function getUserGradedClasses(email: string) {
     'use server'
     if (!await auth(email)) return [];

@@ -11,6 +11,7 @@ export default async function Page() {
   // Get all courses and user courses and graded classes
   const courses = await getAllCourses();
   const userCourses = await getUserCourses(user.user?.email);  
+  //Todo: this will be a new table in the database that we will switch later.
   const userGradedClasses = await getUserGradedClasses(user.user?.email);
   
   return (
