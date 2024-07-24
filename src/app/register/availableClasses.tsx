@@ -1,15 +1,14 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Class, UserGradedClass, UserCourse, UserRegisteredClass } from "@/app/types";
+import { Class, UserCourse } from "@/app/types";
 import { Button } from '@mui/material';
 import ButtonClassInfo from '@/app/register/buttonClassInfo';
 
 function newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm }:
     {
-        userEmail: string,
-        userCourses: UserCourse[],
         availableClasses: Class[],
+        userCourses: UserCourse[],
         currentCourseIndex: number,
         currentTerm: string
     }) {
@@ -37,13 +36,11 @@ function newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, c
 
 //MARK: Start of page
 export default function AvailableClasses(
-    { userEmail, availableClasses, userGradedClasses, userCourses, userRegisteredClasses }:
+    { userEmail, availableClasses, userCourses }:
         {
             userEmail: string,
             availableClasses: Class[],
-            userGradedClasses: UserGradedClass[],
             userCourses: UserCourse[],
-            userRegisteredClasses: UserRegisteredClass[]
         }
 ) {
     const router = useRouter();
@@ -104,10 +101,10 @@ export default function AvailableClasses(
         return 0;
     });
 
-    const currentCourse = userCourses[currentCourseIndex];  
+    const currentCourse = userCourses[currentCourseIndex];
 
     console.log("newFiLterClasses");
-    const classesAvailableForTerm = newFiLterClasses({ userEmail, userCourses, availableClasses, currentCourseIndex, currentTerm });
+    const classesAvailableForTerm = newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm });
     console.table(classesAvailableForTerm);
 
     return (

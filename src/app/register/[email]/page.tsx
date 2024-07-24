@@ -8,20 +8,13 @@ export default async function Page() {
   const user = await getUser({ ensureSignedIn: true });
   // Get all courses and user courses , user graded classes, user registered classes and available classes
   const courses = await getAllCourses();
-  const userCourses = await getUserCourses(user.user?.email);
-  const userGradedClasses = await getUserGradedClasses(user.user?.email);
-  // console.log(userGradedClasses);
-  //Todo: remove this and all unnecessary data
-  const availableClasses = await getClassesForUserRegisteredCourses(user.user?.email);
-  
-  const registeredClasses = await getRegisteredClasses(user.user?.email);  
-
+  const userCourses = await getUserCourses(user.user?.email);  
   const userAvailableClasses = await getClassesAvailableForUser(user.user?.email);  
   
   return (
     <div className="flex flex-wrap md:my-8 justify-center gap-8 ">
       <AllCourses courses={courses} />
-      <AvailableClasses userEmail={user.user?.email}availableClasses={userAvailableClasses} userGradedClasses={userGradedClasses} userCourses={userCourses} userRegisteredClasses={registeredClasses}/>
+      <AvailableClasses userEmail={user.user?.email}availableClasses={userAvailableClasses} userCourses={userCourses} />
     </div>
   );
 };
