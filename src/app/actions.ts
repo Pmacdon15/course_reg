@@ -14,6 +14,7 @@ async function auth(email: string) {
     return true;
 }
 
+//MARK: Get all courses
 export async function getAllCourses() {
     'use server';
     try {
@@ -28,7 +29,6 @@ export async function getAllCourses() {
     }
 }
 //MARK: Get courses available for user, based on user email
-
 export async function getClassesAvailableForUser(email: string) {
     'use server'
     if (!await auth(email)) return [];
@@ -105,21 +105,21 @@ export async function getUserCourses(email: string) {
         return [];
     }
 }
-// Todo: Use Table CRUserClasses
+
 export async function getUserGradedClasses(email: string) {
     'use server'
     if (!await auth(email)) return [];
     try {
         const results = await sql`
         SELECT
-            CRUserGradedClasses.id,
+            CRUserClasses.id,
             classId,
             crclasses.courseid,
             grade,
             termNumber
-        FROM CRUserGradedClasses
-        JOIN CRClasses ON CRUserGradedClasses.classId = CRClasses.id
-        WHERE userEmail = ${email}
+        FROM CRUserClasses
+        JOIN CRClasses ON CRUserClasses.classId = CRClasses.id
+        WHERE userEmail = ${email} AND grade IS NOT NULL
         `;
         if (results.rows.length < 1) {
             throw new Error('No graded classes found');
@@ -160,26 +160,26 @@ export async function getClassesForUserRegisteredCourses(email: string) {
         return [];
     }
 }
-
-export async function getRegisteredClasses(email: string) {
-    'use server'
-    if (!await auth(email)) return [];
-    try {
-        const results = await sql`
-            SELECT
-                classid
-            FROM CRUserRegisteredClasses 
-            WHERE userEmail = ${email}
-        `;
-        if (results.rows.length < 1) {
-            throw new Error('No classes found');
-        }
-        return results.rows as UserRegisteredClass[];
-    } catch (error) {
-        console.error((error as Error).message);
-        return [];
-    }
-}
+//Todo: remove this
+// export async function getRegisteredClasses(email: string) {
+//     'use server'
+//     if (!await auth(email)) return [];
+//     try {
+//         const results = await sql`
+//             SELECT
+//                 classid
+//             FROM CRUserClasses 
+//             WHERE userEmail = ${email} AND grade IS NULL
+//         `;
+//         if (results.rows.length < 1) {
+//             throw new Error('No classes found');
+//         }
+//         return results.rows as UserRegisteredClass[];
+//     } catch (error) {
+//         console.error((error as Error).message);
+//         return [];
+//     }
+// }
 
 // MARK: Can user register for a class
 // export async function canUserRegisterForClass(email: string, className: string) {
