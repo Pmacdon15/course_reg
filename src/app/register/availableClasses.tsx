@@ -64,7 +64,7 @@ export default function AvailableClasses(
             : string => {
             return `${userEmail}/?term=${currentTerm}`;
         },
-        [currentTerm]
+        [userEmail]
     );
     // get term from url then set it to currentTerm
     useEffect(() => {
@@ -72,12 +72,12 @@ export default function AvailableClasses(
         if (newTerm) {
             setCurrentTerm(newTerm);
         }
-    }, [router]);
+    }, [searchParams, router]);
 
     // Update url when term changes
     useEffect(() => {
         router.push(`/register/${createQueryString(currentTerm)}`);
-    }, [currentTerm]);
+    }, [router, createQueryString, currentTerm]);
 
     const handleSwitchToFallTerm = () => {
         setCurrentTerm('Fall');

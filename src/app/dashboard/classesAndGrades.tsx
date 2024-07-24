@@ -22,11 +22,11 @@ export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { 
   });
 
   const currentCourse = usersCourses[currentCourseIndex];
-
   const numberOfGradedClassesForCurrentCourse = userGradedClasses.filter(gradedClass => gradedClass.courseid === currentCourse.id);
+
   const termMap = new Map();
   numberOfGradedClassesForCurrentCourse.forEach(gradedClass => {
-    const term = gradedClass.term
+    const term = gradedClass.termnumber
     const grade = gradedClass.grade;
     const currentTerm = termMap.get(term);
 
