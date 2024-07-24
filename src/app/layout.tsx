@@ -21,7 +21,7 @@ export default async function RootLayout({
   const email = user.user?.email || "";
   return (
     <html lang="en">
-      <body className="h-dvh w-full ">
+      <body className="h-dvh w-full bg-blue-500 ">
         <AppBar email={email}>
           <LogInLogOuButtons />
         </AppBar>
