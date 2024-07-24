@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { Course, UserCourse, UserGradedClass, Class, UserRegisteredClass } from '@/app/types';
+import { Course, UserCourse, UserGradedClass, Class, UserRegisteredClass } from '@/types/types';
 import { getUser } from '@workos-inc/authkit-nextjs'
 
 async function auth(email: string) {

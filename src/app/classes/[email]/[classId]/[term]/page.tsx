@@ -1,4 +1,4 @@
-import { getClassById } from "@/app/actions";
+import { getClassById } from "@/actions/actions";
 import { Button } from '@mui/material';
 export default async function Page({ params }: { params: { email: string, classId: number, term: string } }) {
     const classInfo = await getClassById(params.classId);

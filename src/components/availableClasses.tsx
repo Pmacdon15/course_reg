@@ -1,9 +1,9 @@
 'use client';
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Class, UserCourse } from "@/app/types";
+import { Class, UserCourse } from "@/types/types";
 import { Button } from '@mui/material';
-import ButtonClassInfo from '@/app/register/buttonClassInfo';
+import ButtonClassInfo from '@/components/buttonClassInfo';
 
 function newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm }:
     {
