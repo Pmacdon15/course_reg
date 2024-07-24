@@ -34,35 +34,35 @@ export async function getClassesAvailableForUser(email: string) {
     if (!await auth(email)) return [];
     try {
         const results = await sql`
-    SELECT 
-        crClasses.id,
-        crClasses.courseId,
-        crClasses.className,
-        crClasses.availableFall,
-        crClasses.availableWinter,
-        crClasses.availableSpring
-    FROM 
-        crClasses
-    WHERE 
-        crClasses.prerequisite1 IS NULL
-        AND crClasses.prerequisite2 IS NULL
-        AND crClasses.prerequisite3 IS NULL
-        AND crClasses.prerequisite4 IS NULL
-        AND crClasses.id NOT IN (
-            SELECT classId
-            FROM CRUserClasses
-        )
-        OR 
-        (
-            -- Class has prerequisites, but user has already taken or registered for them
-            (crClasses.prerequisite1 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite1 IS NULL)
-            AND (crClasses.prerequisite2 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite2 IS NULL)
-            AND (crClasses.prerequisite3 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite3 IS NULL)
-            AND (crClasses.prerequisite4 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite4 IS NULL)
-        )
-        AND 
-        -- Class is not already taken or registered by user
-        crClasses.id NOT IN (SELECT classId FROM CRUserClasses)
+        SELECT 
+            crClasses.id,
+            crClasses.courseId,
+            crClasses.className,
+            crClasses.availableFall,
+            crClasses.availableWinter,
+            crClasses.availableSpring
+        FROM 
+            crClasses
+        WHERE 
+            crClasses.prerequisite1 IS NULL
+            AND crClasses.prerequisite2 IS NULL
+            AND crClasses.prerequisite3 IS NULL
+            AND crClasses.prerequisite4 IS NULL
+            AND crClasses.id NOT IN (
+                SELECT classId
+                FROM CRUserClasses
+            )
+            OR 
+            (
+                -- Class has prerequisites, but user has already taken or registered for them
+                (crClasses.prerequisite1 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite1 IS NULL)
+                AND (crClasses.prerequisite2 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite2 IS NULL)
+                AND (crClasses.prerequisite3 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite3 IS NULL)
+                AND (crClasses.prerequisite4 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite4 IS NULL)
+            )
+            AND 
+            -- Class is not already taken or registered by user
+            crClasses.id NOT IN (SELECT classId FROM CRUserClasses)
         `;
 
         if (results.rows.length < 1) {

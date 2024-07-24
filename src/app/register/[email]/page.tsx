@@ -11,15 +11,17 @@ export default async function Page() {
   const userCourses = await getUserCourses(user.user?.email);
   const userGradedClasses = await getUserGradedClasses(user.user?.email);
   // console.log(userGradedClasses);
+  //Todo: remove this and all unnecessary data
   const availableClasses = await getClassesForUserRegisteredCourses(user.user?.email);
+  
   const registeredClasses = await getRegisteredClasses(user.user?.email);  
 
   const userAvailableClasses = await getClassesAvailableForUser(user.user?.email);  
-  console.table(userAvailableClasses);
+  
   return (
     <div className="flex flex-wrap md:my-8 justify-center gap-8 ">
       <AllCourses courses={courses} />
-      <AvailableClasses userEmail={user.user?.email}availableClasses={availableClasses} userGradedClasses={userGradedClasses} userCourses={userCourses} userRegisteredClasses={registeredClasses}/>
+      <AvailableClasses userEmail={user.user?.email}availableClasses={userAvailableClasses} userGradedClasses={userGradedClasses} userCourses={userCourses} userRegisteredClasses={registeredClasses}/>
     </div>
   );
 };

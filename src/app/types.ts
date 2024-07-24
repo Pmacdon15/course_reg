@@ -35,6 +35,8 @@ export type Class ={
   prerequisite2: number,
   prerequisite3: number,
   prerequisite4: number,
+  termnumber: string,
+  termseason: string
 }
 
 export type UserRegisteredClass = {
