@@ -1,3 +1,4 @@
+'use server';
 import { sql } from "@vercel/postgres";
 import { Course, UserCourse, UserGradedClass, Class, UserRegisteredClass } from '@/types/types';
 import { getUser } from '@workos-inc/authkit-nextjs'
@@ -160,48 +161,6 @@ export async function getClassesForUserRegisteredCourses(email: string) {
         return [];
     }
 }
-//Todo: remove this
-// export async function getRegisteredClasses(email: string) {
-//     'use server'
-//     if (!await auth(email)) return [];
-//     try {
-//         const results = await sql`
-//             SELECT
-//                 classid
-//             FROM CRUserClasses 
-//             WHERE userEmail = ${email} AND grade IS NULL
-//         `;
-//         if (results.rows.length < 1) {
-//             throw new Error('No classes found');
-//         }
-//         return results.rows as UserRegisteredClass[];
-//     } catch (error) {
-//         console.error((error as Error).message);
-//         return [];
-//     }
-// }
-
-// MARK: Can user register for a class
-// export async function canUserRegisterForClass(email: string, className: string) {
-//     'use server'
-//     if (!await auth(email)) return false;
-//     try {
-//         const results = await sql`
-//             SELECT
-//                 crClasses.id
-//             FROM crClasses
-//             JOIN crUsersCourses ON crClasses.courseId = crUsersCourses.courseID
-//             WHERE crUsersCourses.userEmail = ${email} AND crClasses.className = ${className}
-//         `;
-//         if (results.rows.length < 1) {
-//             throw new Error('No classes found');
-//         }
-//         return true;
-//     } catch (error) {
-//         console.error((error as Error).message);
-//         return false;
-//     }
-// }
 //MARK: Get class by id
 export async function getClassById(classId: number) {
     'use server'
@@ -219,5 +178,32 @@ export async function getClassById(classId: number) {
     } catch (error) {
         console.error((error as Error).message);
         return {} as Class;
+    }
+}
+//MARK: Register user for class
+export async function registerUserForClass(email:string, classId:number, termSeason:string, prevState: any, formData: FormData) {
+    'use server'
+    // if (!await auth(email)) return [];
+    try {
+        // const results = await sql`
+        //     WITH highestTerm AS (
+        //         SELECT MAX(termNumber) AS highestTerm
+        //         FROM CRUserClasses
+        //         WHERE userEmail = ${email} AND grade IS NULL
+        //     )
+        //     INSERT INTO CRUserClasses (userEmail, classId, termNumber, termSeason)
+        //     SELECT ${email}, ${classId}, highestTerm.highestTerm, ${termSeason}
+        //     FROM highestTerm
+        //     RETURNING *
+        // `;
+        // if (results.rows.length < 1) {
+        //     throw new Error('No classes found');
+        // }
+        console.log(email, classId, termSeason, );
+
+        return true;
+    } catch (error) {
+        console.error((error as Error).message);
+        return { message: 'Error registering for class' + (error as Error).message };
     }
 }
