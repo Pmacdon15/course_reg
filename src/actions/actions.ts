@@ -35,37 +35,79 @@ export async function getClassesAvailableForUser(email: string) {
     if (!await auth(email)) return [];
     try {
         const results = await sql`
-        SELECT 
-            crClasses.id,
-            crClasses.courseId,
-            crClasses.className,
-            crClasses.availableFall,
-            crClasses.availableWinter,
-            crClasses.availableSpring
-        FROM 
-            crClasses
-        WHERE 
+SELECT
+    crClasses.id,
+    crClasses.courseId,
+    crClasses.className,
+    crClasses.availableFall,
+    crClasses.availableWinter,
+    crClasses.availableSpring
+FROM
+    crClasses
+WHERE
+    crClasses.id NOT IN (
+        SELECT
+            classId
+        FROM
+            crUserClasses
+        WHERE
+            userEmail = ${email}
+    )
+    AND (
+        (
+            crClasses.prerequisite1 IN (
+                SELECT
+                    classId
+                FROM
+                    CRUserClasses
+                WHERE
+                    grade IS NOT NULL
+            )
+            OR crClasses.prerequisite1 IS NULL
+        )
+        AND (
+            crClasses.prerequisite2 IN (
+                SELECT
+                    classId
+                FROM
+                    CRUserClasses
+                WHERE
+                    grade IS NOT NULL
+            )
+            OR crClasses.prerequisite2 IS NULL
+        )
+        AND (
+            crClasses.prerequisite3 IN (
+                SELECT
+                    classId
+                FROM
+                    CRUserClasses
+                WHERE
+                    grade IS NOT NULL
+            )
+            OR crClasses.prerequisite3 IS NULL
+        )
+        AND (
+            crClasses.prerequisite4 IN (
+                SELECT
+                    classId
+                FROM
+                    CRUserClasses
+                WHERE
+                    grade IS NOT NULL
+            )
+            OR crClasses.prerequisite4 IS NULL
+        )
+        OR (
             crClasses.prerequisite1 IS NULL
             AND crClasses.prerequisite2 IS NULL
             AND crClasses.prerequisite3 IS NULL
             AND crClasses.prerequisite4 IS NULL
-            AND crClasses.id NOT IN (
-                SELECT classId
-                FROM CRUserClasses
-            )
-            OR 
-            (
-                -- Class has prerequisites, but user has already taken or registered for them
-                (crClasses.prerequisite1 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite1 IS NULL)
-                AND (crClasses.prerequisite2 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite2 IS NULL)
-                AND (crClasses.prerequisite3 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite3 IS NULL)
-                AND (crClasses.prerequisite4 IN (SELECT classId FROM CRUserClasses) OR crClasses.prerequisite4 IS NULL)
-            )
-            AND 
-            -- Class is not already taken or registered by user
-            crClasses.id NOT IN (SELECT classId FROM CRUserClasses)
-        `;
-
+        )
+    );   
+     `;
+     console.log(email);
+        // console.log(results.rows);
         if (results.rows.length < 1) {
             throw new Error('No classes found');
         }
@@ -181,25 +223,59 @@ export async function getClassById(classId: number) {
     }
 }
 //MARK: Register user for class
-export async function registerUserForClass(email:string, classId:number, termSeason:string, prevState: any, formData: FormData) {
+export async function registerUserForClass(email: string, classId: number, termSeason: string, prevState: any, formData: FormData) {
     'use server'
-    // if (!await auth(email)) return [];
+    if (!await auth(email)) return [];
+    console.log(email, classId, termSeason);
     try {
-        // const results = await sql`
-        //     WITH highestTerm AS (
-        //         SELECT MAX(termNumber) AS highestTerm
-        //         FROM CRUserClasses
-        //         WHERE userEmail = ${email} AND grade IS NULL
-        //     )
-        //     INSERT INTO CRUserClasses (userEmail, classId, termNumber, termSeason)
-        //     SELECT ${email}, ${classId}, highestTerm.highestTerm, ${termSeason}
-        //     FROM highestTerm
-        //     RETURNING *
-        // `;
-        // if (results.rows.length < 1) {
-        //     throw new Error('No classes found');
-        // }
-        console.log(email, classId, termSeason, );
+        // currentTermValue will = the highest term with with 1 or many ungraded classes or 1 + the highest term with all graded classes 
+        let currentTermValueResult = await sql`
+        WITH maxTermNumber AS (
+            SELECT MAX(CASE WHEN grade IS NULL THEN termNumber ELSE termNumber + 1 END) AS maxTermNumber
+            FROM CRUserClasses
+            WHERE userEmail = ${email}
+        )
+        SELECT maxTermNumber
+        FROM maxTermNumber;
+    `;
+
+        // Extract currentTermValue from the result
+        const currentTermValue = currentTermValueResult.rows[0].maxtermnumber;
+        console.log('Current Term Number:', currentTermValue);
+
+        // Step 2: Fetch termSeason for currentTermValue
+        const currentTermSeasonResult = await sql`
+        SELECT termSeason
+        FROM CRUserClasses
+        WHERE userEmail = ${email} AND termNumber = ${currentTermValue};
+    `;
+
+        // Extract currentTermSeason from the result
+        const currentTermSeason = currentTermSeasonResult.rows.length > 0 ? currentTermSeasonResult.rows[0].termseason : null;
+
+        console.log('Current Term Season:', currentTermSeason);
+
+        // Step 3: if currentTermSeason is not null then check if class is available in currentTermSeason
+        let classAvailabilityResult = null;
+        if (currentTermSeason) {
+            classAvailabilityResult = await sql`
+                SELECT 
+                    *
+                FROM crClasses
+                WHERE id = ${classId}
+                AND (
+                    (availableFall = true AND ${termSeason} = 'fall')
+                    OR (availableWinter = true AND ${termSeason} = 'winter')
+                    OR (availableSpring = true AND ${termSeason} = 'spring')
+                )
+            `;
+        }
+        const availableClasses = classAvailabilityResult?.rows;
+        console.log('Available Classes:', availableClasses);
+
+
+
+
 
         return true;
     } catch (error) {

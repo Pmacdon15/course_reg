@@ -374,28 +374,7 @@ VALUES
     NULL
   );
 
--- MARK: Insert Data into CRUserGradedClasses
--- Todo remove
-INSERT INTO
-  CRUserGradedClasses (userEmail, classId, grade, termNumber)
-VALUES
-  ('pmacdonald15@gmail.com', 1, 93, 1),
-  ('pmacdonald15@gmail.com', 2, 95, 1),
-  ('pmacdonald15@gmail.com', 3, 89, 1),
-  ('pmacdonald15@gmail.com', 4, 100, 1),
-  ('pmacdonald15@gmail.com', 5, 93, 1),
-  ('pmacdonald15@gmail.com', 6, 92, 2),
-  ('pmacdonald15@gmail.com', 7, 91, 2),
-  ('pmacdonald15@gmail.com', 8, 94, 2),
-  ('pmacdonald15@gmail.com', 9, 100, 2),
-  ('pmacdonald15@gmail.com', 10, 98, 2);
 
--- MARK: Insert Data into CRUserRegisteredClasses
--- Todo remove
-INSERT INTO
-  CRUserRegisteredClasses (userEmail, classId, termNumber, termSeason)
-VALUES
-  ('pmacdonald15@gmail.com', 11, 3, 'Fall');
 
 -- Mark: Insert Data into CRUserClasses
 INSERT INTO
