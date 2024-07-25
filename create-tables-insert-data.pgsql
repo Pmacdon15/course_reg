@@ -392,8 +392,9 @@ VALUES
   ('pmacdonald15@gmail.com', 10, 98, 2, 'Winter'),
   ('pmacdonald15@gmail.com', 11, NULL, 3, 'Fall');
 
--- drop table CRUserRegisteredClasses
+-- drop table CRUserClasses
 -- select * from crusergradedclasses
 -- select * from crclasses
 -- select * from crUserclasses
 -- select * from cruserregisteredclasses
+DELETE FROM CRUserClasses WHERE id = 7 ;

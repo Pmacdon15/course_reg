@@ -103,9 +103,9 @@ export default function AvailableClasses(
 
     const currentCourse = userCourses[currentCourseIndex];
 
-    console.log("newFiLterClasses");
+    // console.log("newFiLterClasses");
     const classesAvailableForTerm = newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm });
-    console.table(classesAvailableForTerm);
+    // console.table(classesAvailableForTerm);
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
