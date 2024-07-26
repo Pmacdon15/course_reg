@@ -37,8 +37,7 @@ CREATE TABLE
     prerequisite3 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL,
     prerequisite4 INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE NULL
   );
-
--- MARK: CRUserGradedClasses
+-- MARK: CRUserClasses
 CREATE TABLE
   CRUserClasses (
     id SERIAL PRIMARY KEY,
@@ -351,8 +350,6 @@ VALUES
     NULL
   );
 
-
-
 -- Mark: Insert Data into CRUserClasses
 INSERT INTO
   CRUserClasses (userEmail, classId, grade, termNumber, termSeason)
@@ -375,3 +372,10 @@ VALUES
 -- select * from crUserclasses
 -- select * from cruserregisteredclasses
 -- DELETE FROM CRUserClasses WHERE id = 7 ;
+SELECT
+  *
+FROM
+  crClasses
+WHERE
+  id = 1
+  AND availableFall = true
