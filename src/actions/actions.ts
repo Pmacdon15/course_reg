@@ -214,12 +214,13 @@ export async function registerUserForClass(email: string, classId: number, termS
     const firstAvailableTermSeason = await getTermSeason(email, firstAvailableTermNumber);
     // Second term season
     const secondAvailableTermSeason = await getTermSeason(email, secondAvailableTermNumber);
+   
     // Check and add class to user classes first term season or second term season
     if (await checkAndAddClassToUserClasses(email, classId, firstAvailableTermNumber, termSeason, firstAvailableTermSeason)) {
-        console.log("Class added to first term season");
+        console.log("Class added to first available term season");
     } else {
         if (await checkAndAddClassToUserClasses(email, classId, secondAvailableTermNumber, termSeason, secondAvailableTermSeason)) {
-            console.log("Class added to second term season");
+            console.log("Class added to second available term season");
         }
     }
 
@@ -320,32 +321,6 @@ export async function addClassToUserClasses(email: string, classId: number, term
         return false;
     }
 }
-//MARK: Is class available in term season
-// export async function isClassAvailableInTermSeason(classId: number, termSeason: string) {
-//     'use server';
-//     try {
-//         const results = await sql`
-//         SELECT
-//             *
-//         FROM
-//             crClasses
-//         WHERE id = ${classId} AND (
-//             (${termSeason} = 'Fall' AND availableFall = true) 
-//         OR
-//             (${termSeason} = 'Winter' AND availableWinter = true)
-//         OR
-//             (${termSeason} = 'Spring' AND availableSpring = true)
-//         )    
-//         `;
-//         if (results.rows.length < 1) {
-//             throw new Error('No classes found');
-//         }
-//         return true;
-//     } catch (error) {
-//         console.error((error as Error).message);
-//         return false;
-//     }
-// }
 
 //MARK: Check and add class to user classes
 export async function checkAndAddClassToUserClasses(email: string, classId: number, termNumber: number, userTermSeason: string, selectedTermSeason: string) {
@@ -355,6 +330,7 @@ export async function checkAndAddClassToUserClasses(email: string, classId: numb
             return true;
         }
     } else {
+        if (selectedTermSeason != userTermSeason) return false;
         if (await addClassToUserClasses(email, classId, termNumber, selectedTermSeason)) {
             console.log("Class added to term");
             return true;

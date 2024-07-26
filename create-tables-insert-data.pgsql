@@ -371,7 +371,7 @@ VALUES
 -- select * from crclasses
 -- select * from crUserclasses
 -- select * from cruserregisteredclasses
--- DELETE FROM CRUserClasses WHERE id = 7 ;
+-- DELETE FROM CRUserClasses WHERE id = 4 ;
 SELECT
   *
 FROM
