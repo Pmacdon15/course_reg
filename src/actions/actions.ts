@@ -211,108 +211,47 @@ export async function getClassById(classId: number) {
     }
 }
 //MARK: Register user for class
-// export async function registerUserForClass(email: string, classId: number, termSeason: string, prevState: any, formData: FormData) {
-//     'use server'
-//     if (!await auth(email)) return [];
-//     console.log(email, classId, termSeason);
-//     try {
-//         // currentTermValue will = the highest term with with 1 or many ungraded classes or 1 + the highest term with all graded classes 
-//         let currentTermValueResult = await sql`
-//         WITH maxTermNumber AS (
-//             SELECT MAX(CASE WHEN grade IS NULL THEN termNumber ELSE termNumber + 1 END) AS maxTermNumber
-//             FROM CRUserClasses
-//             WHERE userEmail = ${email}
-//         )
-//         SELECT maxTermNumber
-//         FROM maxTermNumber;
-//     `;
-
-//         // Extract currentTermValue from the result
-//         const currentTermValue = currentTermValueResult.rows[0].maxtermnumber;
-//         console.log('Current Term Number:', currentTermValue);
-
-//         // Step 2: Fetch termSeason for currentTermValue
-//         const currentTermSeasonResult = await sql`
-//         SELECT termSeason
-//         FROM CRUserClasses
-//         WHERE userEmail = ${email} AND termNumber = ${currentTermValue};
-//     `;
-
-//         // Extract currentTermSeason from the result
-//         const currentTermSeason = currentTermSeasonResult.rows.length > 0 ? currentTermSeasonResult.rows[0].termseason : null;
-
-//         console.log('Current Term Season:', currentTermSeason);
-
-//         // Step 3: if currentTermSeason is not null then check if class is available in currentTermSeason
-//         let classAvailabilityResult = null;
-//         if (currentTermSeason) {
-//             classAvailabilityResult = await sql`
-//                 SELECT 
-//                     *
-//                 FROM crClasses
-//                 WHERE id = ${classId}
-//                 AND (
-//                     (availableFall = true AND ${termSeason} = 'fall')
-//                     OR (availableWinter = true AND ${termSeason} = 'winter')
-//                     OR (availableSpring = true AND ${termSeason} = 'spring')
-//                 )
-//             `;
-//         }
-//         const availableClasses = classAvailabilityResult?.rows;
-//         console.log('Available Classes:', availableClasses);
-
-
-
-
-
-//         return true;
-//     } catch (error) {
-//         console.error((error as Error).message);
-//         return { message: 'Error registering for class' + (error as Error).message };
-//     }
-// }
-
 export async function registerUserForClass(email: string, classId: number, termSeason: string, prevState: any, formData: FormData) {
     'use server';
     if (!await auth(email)) return [];
-    try {
-        // 1. Is term number for user grater than 0
-        // If not, set term number to 1
-        // 2. Once one class is selected that term season with be the same until the next term
-        // Term season must also match the term season of the class or the class with be added to the next term, 
-        // as long as there is no season picked for that class or it matches that terms current class
-        // Allow up to 5 classes a term, for a total of two terms of ungraded classes    
-        // Allow 5 more classes when all classes are graded for the term number
-        // 3. Will be similar to checking availability of classes for user but with take out the grade is not null part after 1 term of 
-        // ungraded classes are added
 
-        // Get the first available term number is null with no ungraded classes        
-        const firstAvailableTermNumber = await getTermNumber(email)+ 1;
-        const secondAvailable = firstAvailableTermNumber + 1;
-        console.log("First Available Term:", firstAvailableTermNumber);
-        console.log("Second available Term:",secondAvailable);
-        // Return null if no ungraded classes in the first term
-        const firstAvailableTermSeason = await getTermSeason(email, firstAvailableTermNumber);
-        console.log("First Season:",firstAvailableTermSeason);
-        // Second term season
-        const secondAvailableTermSeason = await getTermSeason(email, secondAvailable);
-        console.log("Second Season",secondAvailableTermSeason);
+    // Get the first available term number is null with no ungraded classes        
+    const firstAvailableTermNumber = await getTermNumber(email) + 1;
+    const secondAvailable = firstAvailableTermNumber + 1;
+    console.log("First Available Term:", firstAvailableTermNumber);
+    console.log("Second available Term:", secondAvailable);
+    // Return null if no ungraded classes in the first term
+    const firstAvailableTermSeason = await getTermSeason(email, firstAvailableTermNumber);
+    console.log("First Season:", firstAvailableTermSeason);
+    // Second term season
+    const secondAvailableTermSeason = await getTermSeason(email, secondAvailable);
+    console.log("Second Season", secondAvailableTermSeason);
 
+    // If first term season is null allow a class from any season to be added
+    if (!firstAvailableTermSeason) {
+        // Add class to first term season
+        console.log("First Term Season is null");
+        if (await addClassToUserClasses(email, classId,firstAvailableTermNumber, termSeason)) {
+            return { message: "Class added to first term season" };
+        }
+    } else {
 
-
-
-
-
-
-
-        // if (results.rows.length < 1) {
-        //     throw new Error('No classes found');
-        // }
-        // return results.rows as UserRegisteredClass[];
-    } catch (error) {
-        console.error((error as Error).message);
-        return [];
     }
+
+
+    // Else first season is not null, check incoming class is available and selected in the first term season
+
+    // If not available, check if second term season is null and add class to second term season
+
+    // Else second term season is not null, check incoming class is available available and selected in the second term season
+
+    // If not available, return error message
+
+
+
+
+
+
 
 }
 
@@ -321,18 +260,18 @@ async function getTermSeason(email: string, termNumber: number) {
     if (!await auth(email)) return [];
     try {
         const termSeason = await sql`
-            SELECT 
-                CASE
+            SELECT
+            CASE
                     WHEN COUNT(*) > 0 THEN MAX(termSeason)
                     ELSE NULL
                 END AS termSeason
-                FROM
-                CRUserClasses
-                WHERE 
-                userEmail = ${email}
+            FROM
+            CRUserClasses
+            WHERE
+            userEmail = ${email}
                 AND termNumber = ${termNumber}
                 AND grade IS NULL;
-        `;
+            `;
         return termSeason.rows[0].termseason;
 
     } catch (error) {
@@ -346,17 +285,36 @@ async function getTermNumber(email: string) {
     if (!await auth(email)) return [];
     try {
         const termNumber = await sql`
-        SELECT 
+            SELECT
             MAX(termNumber) AS termNumber
         FROM CRUserClasses
         WHERE userEmail = ${email} AND grade IS NOT NULL
-        `;
+                `;
         // console.log(termNumber.rows[0].termnumber);
         return termNumber.rows[0].termnumber;
-
     } catch (error) {
         console.error((error as Error).message);
         return 0;
     }
 }
 
+//MARK: Add class to user classes by class id and termSeason if available that season return true or false
+export async function addClassToUserClasses(email: string, classId: number, termNumber: number, termSeason: string) {
+    'use server';
+    if (!await auth(email)) return [];
+    try {
+        console.log("hi");
+        const results = await sql`
+        INSERT INTO CRUserClasses (userEmail, classId,termNumber, termSeason)
+        VALUES (${email}, ${classId},${termNumber} ,${termSeason})
+        RETURNING *
+        `;
+        if (results.rows.length < 1) {
+            throw new Error('No classes found');
+        }
+        return true;
+    } catch (error) {
+        console.error((error as Error).message);
+        return false;
+    }
+}

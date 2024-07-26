@@ -39,7 +39,6 @@ CREATE TABLE
   );
 
 -- MARK: CRUserGradedClasses
--- This is the ne table that will replace CRUserClasses
 CREATE TABLE
   CRUserClasses (
     id SERIAL PRIMARY KEY,
@@ -56,28 +55,6 @@ INSERT INTO
 VALUES
   ('Your email here', 1, TRUE),
   ('Your email here', 2, FALSE);
-
--- MARK: CRUserGradedClasses
--- Todo remove
-CREATE TABLE
-  CRUserGradedClasses (
-    id SERIAL PRIMARY KEY,
-    userEmail VARCHAR(255),
-    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
-    grade INTEGER,
-    termNumber INTEGER NOT NULL
-  );
-
--- TODO remove this table
--- MARK: CRUserRegisteredClasses
-CREATE TABLE
-  CRUserRegisteredClasses (
-    id SERIAL PRIMARY KEY,
-    userEmail VARCHAR(255),
-    classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
-    termNumber INTEGER NOT NULL,
-    termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
-  );
 
 -- MARK: Insert Data into CraAvailableCourses
 INSERT INTO
@@ -397,4 +374,4 @@ VALUES
 -- select * from crclasses
 -- select * from crUserclasses
 -- select * from cruserregisteredclasses
-DELETE FROM CRUserClasses WHERE id = 7 ;
+-- DELETE FROM CRUserClasses WHERE id = 7 ;
