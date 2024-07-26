@@ -61,8 +61,6 @@ WHERE
                     classId
                 FROM
                     CRUserClasses
-                WHERE
-                    grade IS NOT NULL
             )
             OR crClasses.prerequisite1 IS NULL
         )
@@ -72,8 +70,6 @@ WHERE
                     classId
                 FROM
                     CRUserClasses
-                WHERE
-                    grade IS NOT NULL
             )
             OR crClasses.prerequisite2 IS NULL
         )
@@ -83,8 +79,7 @@ WHERE
                     classId
                 FROM
                     CRUserClasses
-                WHERE
-                    grade IS NOT NULL
+                
             )
             OR crClasses.prerequisite3 IS NULL
         )
@@ -94,8 +89,6 @@ WHERE
                     classId
                 FROM
                     CRUserClasses
-                WHERE
-                    grade IS NOT NULL
             )
             OR crClasses.prerequisite4 IS NULL
         )
