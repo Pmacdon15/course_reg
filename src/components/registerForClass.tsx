@@ -18,6 +18,7 @@ export default function RegisterForClass({ classInfo, email, classId, term }: { 
       <p>{decodeURIComponent(email)}</p>
       <p>Register for the {classInfo?.classname}</p>
       <p>in the {term} Term</p>
+      <p>{(state as { message: string })?.message}</p>
       <form action={formAction}>
         <Button type="submit">Register</Button>
       </form>

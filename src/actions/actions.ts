@@ -218,29 +218,16 @@ export async function registerUserForClass(email: string, classId: number, termS
     // Check and add class to user classes first term season or second term season
     if (await checkAndAddClassToUserClasses(email, classId, firstAvailableTermNumber, termSeason, firstAvailableTermSeason)) {
         console.log("Class added to first available term season");
+        return { message: 'Class added to first available term season' }
     } else {
         if (await checkAndAddClassToUserClasses(email, classId, secondAvailableTermNumber, termSeason, secondAvailableTermSeason)) {
             console.log("Class added to second available term season");
+            return { message: 'Class added to first available term season' }
         }
     }
 
-    return { message: 'Class added to user classes' };
-
-
-    // Else first season is not null, check incoming class is available and selected in the first term season
-
-    // If not available, check if second term season is null and add class to second term season
-
-    // Else second term season is not null, check incoming class is available available and selected in the second term season
-
-    // If not available, return error message
-
-
-
-
-
-
-
+    return { message: 'Class not added to user classes' };
+ 
 }
 
 async function getTermSeason(email: string, termNumber: number) {
