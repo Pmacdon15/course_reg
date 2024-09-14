@@ -5,46 +5,26 @@ import { Class, UserCourse } from "@/types/types";
 import { Button } from '@mui/material';
 import ButtonClassInfo from '@/components/buttonClassInfo';
 
-function newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm }:
-    {
-        availableClasses: Class[],
-        userCourses: UserCourse[],
-        currentCourseIndex: number,
-        currentTerm: string
-    }) {
-    // Get Current Course
-    const currentCourse = userCourses[currentCourseIndex];
-
-    // Get the classes that are part of the current course
-    const currentCourseClasses = availableClasses.filter(availableClass => availableClass.courseid === currentCourse.id);
-
-    // Loop over currentCourseClasses and remove classes that are not available in the current term
-    const classesAvailableForTerm = currentCourseClasses.filter(availableClass => {
-        if (availableClass.availablefall && currentTerm === 'Fall') {
-            return true;
-        }
-        if (availableClass.availablewinter && currentTerm === 'Winter') {
-            return true;
-        }
-        if (availableClass.availablespring && currentTerm === 'Spring') {
-            return true;
-        }
-        return false;
-    });
-    return classesAvailableForTerm;
-}
-
-//MARK: Start of page
 export default function AvailableClasses(
-    { userEmail, availableClasses, userCourses }:
+    { userEmail, availableFallClasses, availableWinterClasses, availableSpringClasses, userCourses }:
         {
             userEmail: string,
-            availableClasses: Class[],
+            availableFallClasses: Class[],
+            availableWinterClasses: Class[],
+            availableSpringClasses: Class[],
             userCourses: UserCourse[],
         }
 ) {
     const router = useRouter();
     const searchParams = useSearchParams()
+
+    // Handle switching between courses
+    userCourses.sort((a, b) => {
+        if (a.registered && !b.registered) return -1;
+        if (!a.registered && b.registered) return 1;
+        return 0;
+    });
+
     // Handle switching between courses
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
 
@@ -56,8 +36,12 @@ export default function AvailableClasses(
         setCurrentCourseIndex((prevIndex) => prevIndex - 1);
     };
 
+    const currentCourse = userCourses[currentCourseIndex];
+
     // Handle switching between terms    
     const [currentTerm, setCurrentTerm] = useState('Fall');
+
+    //TODO: Add query for course
     // Create query string for url
     const createQueryString = useCallback(
         (currentTerm: string)
@@ -76,13 +60,23 @@ export default function AvailableClasses(
 
     // Update url when term changes
     useEffect(() => {
+        if (currentTerm === 'Fall') {
+            setCurrentTermArray(availableFallClasses);
+        }
+        if (currentTerm === 'Winter') {
+            setCurrentTermArray(availableWinterClasses);
+        }
+        if (currentTerm === 'Spring') {
+            setCurrentTermArray(availableSpringClasses);
+        }
         router.push(`/register/${createQueryString(currentTerm)}`);
     }, [router, createQueryString, currentTerm]);
+
+    const [currentTermArray, setCurrentTermArray] = useState<Class[]>([]);
 
     const handleSwitchToFallTerm = () => {
         setCurrentTerm('Fall');
         router.push(`/register/${createQueryString('Fall')}`);
-
     };
 
     const handleSwitchToWinterTerm = () => {
@@ -94,18 +88,6 @@ export default function AvailableClasses(
         setCurrentTerm('Spring');
         router.push(`/register/${createQueryString('Spring')}`);
     };
-
-    userCourses.sort((a, b) => {
-        if (a.registered && !b.registered) return -1;
-        if (!a.registered && b.registered) return 1;
-        return 0;
-    });
-
-    const currentCourse = userCourses[currentCourseIndex];
-
-    // console.log("newFiLterClasses");
-    const classesAvailableForTerm = newFiLterClasses({ availableClasses, userCourses, currentCourseIndex, currentTerm });
-    // console.table(classesAvailableForTerm);
 
     return (
         <div className="h-fit md:h-[600px] w-full md:w-96 bg-gradient-to-r from-blue-400 to-blue-200 overflow-auto resize-y sm:resize-none rounded-md shadow-md p-4">
@@ -128,11 +110,14 @@ export default function AvailableClasses(
                     {currentCourse && (
                         <ul>
                             {
-                                classesAvailableForTerm.map((availableClass: Class) => (
-                                    <li key={availableClass.id} className="mb-4">
-                                        <ButtonClassInfo userEmail={userEmail} className={availableClass.classname} classId={availableClass.id} term={currentTerm} />
-                                    </li>
-                                ))}
+                                currentTermArray
+                                    .filter((availableClass: Class) => availableClass.courseid === currentCourse.id)
+                                    .map((availableClass: Class) => (
+                                        <li key={availableClass.id} className="mb-4">
+                                            <ButtonClassInfo userEmail={userEmail} className={availableClass.classname} classId={availableClass.id} term={currentTerm} />
+                                        </li>
+                                    ))
+                            }
                         </ul>
                     )}
                 </div>
