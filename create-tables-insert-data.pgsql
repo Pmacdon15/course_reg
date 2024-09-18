@@ -1,12 +1,19 @@
 -- Drop existing tables to reset the database
 DROP TABLE IF EXISTS PreReqs;
-DROP TABLE IF EXISTS CRUserClasses;
-DROP TABLE IF EXISTS CRSeasonsClassAvailable;
-DROP TABLE IF EXISTS CRClasses;
-DROP TABLE IF EXISTS crUsersCourses;
-DROP TABLE IF EXISTS CRSeasons;
-DROP TABLE IF EXISTS CRAvailableCourses;
 
+DROP TABLE IF EXISTS CRUserClasses;
+
+DROP TABLE IF EXISTS CRUserTerms;
+
+DROP TABLE IF EXISTS CRSeasonsClassAvailable;
+
+DROP TABLE IF EXISTS CRClasses;
+
+DROP TABLE IF EXISTS crUsersCourses;
+
+DROP TABLE IF EXISTS CRSeasons;
+
+DROP TABLE IF EXISTS CRAvailableCourses;
 
 -- MARK: CRAvailableCourses
 CREATE TABLE
@@ -56,6 +63,16 @@ CREATE TABLE
     UNIQUE (userEmail, courseID)
   );
 
+-- MARK: CRUserTerms
+CREATE TABLE
+  CRUserTerms (
+    id SERIAL PRIMARY KEY,
+    userEmail VARCHAR(255),
+    termNumber INTEGER NOT NULL,
+    doneRegistration BOOLEAN DEFAULT FALSE,
+    seasonId INTEGER REFERENCES CRSeasons (id) ON DELETE CASCADE
+  );
+
 -- MARK: CRUserClasses
 CREATE TABLE
   CRUserClasses (
@@ -63,9 +80,7 @@ CREATE TABLE
     userEmail VARCHAR(255),
     classId INTEGER REFERENCES CRClasses (id) ON DELETE CASCADE,
     grade INTEGER,
-    termNumber INTEGER NOT NULL,
-    -- termSeason VARCHAR(255) NOT NULL DEFAULT 'Fall'
-    seasonId INTEGER REFERENCES CRSeasons (id) ON DELETE CASCADE
+    termId INTEGER REFERENCES CRUserTerms (id) ON DELETE CASCADE
   );
 
 -- MARK: Pre-reqs
@@ -123,7 +138,6 @@ VALUES
   ('Winter'),
   ('Spring');
 
-
 -- MARK: Insert Data into CRClasses
 INSERT INTO
   CRClasses (classCode, className, courseId)
@@ -169,7 +183,6 @@ VALUES
   ),
   ('TECH2102', 'Enterprise Computing', 1);
 
-
 -- MARK: Insert Data into CRSeasonsClassAvailable
 INSERT INTO
   CRSeasonsClassAvailable (classId, seasonId)
@@ -205,7 +218,6 @@ VALUES
   (19, 2),
   (20, 2);
 
-
 -- MARK: Insert Data into crUsersCourses
 INSERT INTO
   crUsersCourses (userEmail, courseID, registered)
@@ -213,21 +225,30 @@ VALUES
   ('pmacdonald15@gmail.com', 1, TRUE),
   ('pmacdonald15@gmail.com', 2, FALSE);
 
+-- MARK: Insert Data into CRUserTerms
+INSERT INTO
+  CRUserTerms (userEmail, termNumber, doneRegistration, seasonId)
+VALUES
+  ('pmacdonald15@gmail.com', 1, TRUE, 1),
+  ('pmacdonald15@gmail.com', 2, TRUE, 2),
+  ('pmacdonald15@gmail.com', 3, FALSE, 1);
+
+
 -- Mark: Insert Data into CRUserClasses
 INSERT INTO
-  CRUserClasses (userEmail, classId, grade, termNumber, seasonId)
+  CRUserClasses (userEmail, classId, grade, termId)
 VALUES
-  ('pmacdonald15@gmail.com', 1, 93, 1, 1),
-  ('pmacdonald15@gmail.com', 2, 95, 1, 1),
-  ('pmacdonald15@gmail.com', 3, 89, 1, 1),
-  ('pmacdonald15@gmail.com', 4, 100, 1, 1),
-  ('pmacdonald15@gmail.com', 5, 93, 1, 1),
-  ('pmacdonald15@gmail.com', 6, 92, 2, 2),
-  ('pmacdonald15@gmail.com', 7, 91, 2, 2),
-  ('pmacdonald15@gmail.com', 8, 94, 2, 2),
-  ('pmacdonald15@gmail.com', 9, 100, 2, 2),
-  ('pmacdonald15@gmail.com', 10, 98, 2, 2),
-  ('pmacdonald15@gmail.com', 11, NULL, 3, 2);
+  ('pmacdonald15@gmail.com', 1, 93, 1),
+  ('pmacdonald15@gmail.com', 2, 95, 1),
+  ('pmacdonald15@gmail.com', 3, 89, 1),
+  ('pmacdonald15@gmail.com', 4, 100, 1),
+  ('pmacdonald15@gmail.com', 5, 93, 1),
+  ('pmacdonald15@gmail.com', 6, 92, 2),
+  ('pmacdonald15@gmail.com', 7, 91, 2),
+  ('pmacdonald15@gmail.com', 8, 94, 2),
+  ('pmacdonald15@gmail.com', 9, 100, 2),
+  ('pmacdonald15@gmail.com', 10, 98, 2),
+  ('pmacdonald15@gmail.com', 11, NULL, 3);
 
 INSERT INTO
   PreReqs (classId, preReqId)
@@ -255,6 +276,6 @@ VALUES
   (20, 10),
   (20, 14);
 
--- cruserscourses
--- cravailablecourses
--- crclasses
+-- -- cruserscourses
+-- -- cravailablecourses
+-- -- crclasses

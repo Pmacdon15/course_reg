@@ -1,7 +1,7 @@
 'use client';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { UserCourse, UserGradedClass } from '@/types/types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@mui/material';
 
 export default function ClassesAndGrades({ usersCourses, userGradedClasses }: { usersCourses: UserCourse[], userGradedClasses: UserGradedClass[] }) {

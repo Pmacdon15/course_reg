@@ -8,7 +8,7 @@ export default async function Page({ params }: { params: { email: string, classI
 
     return (
         <div className="flex flex-col h-full content-center align-middle text-center items-center justify-center">
-            <RegisterForClass classInfo={classInfo} email={decodedEmail} classId={params.classId} term={params.term} />
+            <RegisterForClass classInfo={classInfo} email={decodedEmail} classId={params.classId} termSeason={params.term} />
         </div>
     );
 };

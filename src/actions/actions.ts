@@ -91,7 +91,7 @@ WHERE
             SELECT classId
             FROM PreReqs
         )
-        OR crClasses.id IN ( -- If the class has prerequisites, check that the user has completed all of them
+        OR crClasses.id IN ( -- If the class has prerequisites, check that the user has registered for them
             SELECT p.classId
             FROM PreReqs p
             JOIN crUserClasses uc ON p.preReqId = uc.classId
@@ -115,24 +115,22 @@ WHERE
     }
 }
 
-
-
-
-
+//MARK: Get user registered classes
 export async function getUserGradedClasses(email: string) {
     'use server'
     if (!await auth(email)) return [];
     try {
         const results = await sql`
-        SELECT
-            CRUserClasses.id,
-            classId,
-            crclasses.courseid,
-            grade,
-            termNumber
-        FROM CRUserClasses
-        JOIN CRClasses ON CRUserClasses.classId = CRClasses.id
-        WHERE userEmail = ${email} AND grade IS NOT NULL
+    SELECT
+        CRUserClasses.id,
+        classId,
+        CRClasses.courseId,
+        grade,
+        CRUserTerms.termNumber
+    FROM CRUserClasses
+    JOIN CRClasses ON CRUserClasses.classId = CRClasses.id
+    JOIN CRUserTerms ON CRUserClasses.termId = CRUserTerms.id
+    WHERE CRUserClasses.userEmail = ${email} AND grade IS NOT NULL;
         `;
         if (results.rows.length < 1) {
             throw new Error('No graded classes found');
@@ -143,6 +141,8 @@ export async function getUserGradedClasses(email: string) {
         return [];
     }
 }
+// MARK: Get user current term and if it has finished registration
+
 
 export async function getClassesForUserRegisteredCourses(email: string) {
     'use server'

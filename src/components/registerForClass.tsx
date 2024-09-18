@@ -8,7 +8,7 @@ const initialState = {
   message: '',
 }
 
-export default function RegisterForClass({ classInfo, email, classId, term }: { classInfo: Class, email: string, classId: number, term: string }) {
+export default function RegisterForClass({ classInfo, email, classId, termSeason }: { classInfo: Class, email: string, classId: number, termSeason: string }) {
   // const updateFormWithWithInfo = registerUserForClass.bind(null, email, classId, term);
   // const [state, formAction] = useFormState(updateFormWithWithInfo, initialState);
   return (
@@ -17,7 +17,7 @@ export default function RegisterForClass({ classInfo, email, classId, term }: { 
       <h2>{classInfo?.classname}</h2>
       <p>{decodeURIComponent(email)}</p>
       <p>Register for the {classInfo?.classname}</p>
-      <p>in the {term} Term</p>
+      <p>in the {termSeason} Term</p>
       {/* <p>{(state as { message: string })?.message}</p> */}
       <form>
         <Button type="submit">Register</Button>
